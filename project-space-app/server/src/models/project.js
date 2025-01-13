@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-// Define the Project schema with timestamps option
+// Define the Project schema
 const projectSchema = new mongoose.Schema({
   name: {
     type: String,

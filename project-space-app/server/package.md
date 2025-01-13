@@ -6,5 +6,4 @@ npm i express
 npm i nodemon --save-dev  
 npm i cors  
 npm i dotenv  
-npm i yup  
-npm i dayjs  
+npm i mongoose
