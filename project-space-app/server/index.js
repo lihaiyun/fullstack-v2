@@ -3,6 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+// Import routers
+import projectsRouter from './routes/projects.js';
+
 // Configure dotenv to load environment variables
 dotenv.config();
 
@@ -19,6 +22,8 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('Welcome to the project space!');
 });
+
+app.use('/projects', projectsRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3001;
