@@ -65,4 +65,12 @@ router.get("/", async (req, res) => {
   res.json(projects);
 });
 
+router.get("/:id", async (req, res) => {
+  let project = await Project.findById(req.params.id);
+  if (!project) {
+    return res.status(404).json({ message: "Project not found" });
+  }
+  res.json(project);
+});
+
 export default router;
