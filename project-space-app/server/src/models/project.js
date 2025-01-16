@@ -4,25 +4,18 @@ import mongoose from 'mongoose';
 const projectSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Project name is required'],
-    minlength: [3, 'Project name must be at least 3 characters long'],
-    maxlength: [100, 'Project name must be less than 100 characters']
+    required: true
   },
   description: {
-    type: String,
-    maxlength: [500, 'Description must be less than 500 characters']
+    type: String
   },
   dueDate: {
     type: Date,
-    required: [true, 'Due date is required']
+    required: true
   },
   status: {
     type: String,
-    enum: {
-      values: ['in-progress', 'completed', 'pending'],
-      message: 'Status must be one of the following: pending, in-progress, completed'
-    },
-    default: 'pending'
+    required: true
   }
 }, {
   timestamps: true  // Enables `createdAt` and `updatedAt`

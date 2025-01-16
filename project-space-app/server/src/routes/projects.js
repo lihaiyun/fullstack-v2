@@ -1,11 +1,33 @@
 import express from "express";
+import yup from "yup";
 
 import Project from "../models/project.js";
 
 const router = express.Router();
 
+const projectSchema = yup.object().shape({
+  name: yup.string().trim()
+    .required('Name is required')  
+    .min(3, 'Name must be at least 3 characters')
+    .max(50, 'Name must be at most 100 characters'),
+  description: yup.string()
+    .max(200, 'Description must be at most 500 characters'),
+  dueDate: yup.date()
+    .required('Due date is required'),
+  status: yup.string()
+    .required('Status is required')
+    .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
+});
+
 router.post("/", async (req, res) => {
-  const { name, description, dueDate, status } = req.body;
+  let data = req.body;
+  try {
+    data = await projectSchema.validate(data, { abortEarly: false });
+  } catch (err) {
+    return res.status(400).json({ message: err.errors.join(", ") });
+  }
+
+  const { name, description, dueDate, status } = data;
   const newProject = new Project({
     name,
     description,
@@ -17,13 +39,8 @@ router.post("/", async (req, res) => {
     const savedProject = await newProject.save();
     res.json(savedProject);
   } catch (err) {
-    if (err.name === "ValidationError") {
-      // Send validation error messages if validation fails
-      res.status(400).json({ message: err.message });
-    } else {
-      // Handle other errors
-      res.status(500).json({ message: "Server error" });
-    }
+    console.error(err);
+    res.status(500).json({ message: "Failed to save project" });
   }
 });
 
