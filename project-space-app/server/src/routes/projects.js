@@ -102,14 +102,8 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-  let project = await Project.findById(req.params.id);
-  if (!project) {
-    return res.status(404).json({ message: "Project not found" });
-  }
-
-  const result = await project.remove();
-  console.log(result);
-  res.json({ message: "Project deleted" });
+  const result = await Project.deleteOne({ _id: req.params.id });
+  res.json(result);
 });
 
 export default router;
