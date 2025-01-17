@@ -18,6 +18,7 @@ const projectSchema = new mongoose.Schema({
     required: true
   }
 }, {
+  versionKey: false, // Don't add __v to a new document
   timestamps: true  // Enables `createdAt` and `updatedAt`
 });
 

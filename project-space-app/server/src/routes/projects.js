@@ -73,4 +73,43 @@ router.get("/:id", async (req, res) => {
   res.json(project);
 });
 
+router.put("/:id", async (req, res) => {
+  let data = req.body;
+  try {
+    data = await projectSchema.validate(data, { abortEarly: false });
+  } catch (err) {
+    return res.status(400).json({ message: err.errors.join(", ") });
+  }
+
+  const { name, description, dueDate, status } = data;
+  let project = await Project.findById(req.params.id);
+  if (!project) {
+    return res.status(404).json({ message: "Project not found" });
+  }
+
+  project.name = name;
+  project.description = description;
+  project.dueDate = dueDate;
+  project.status = status;
+
+  try {
+    const savedProject = await project.save();
+    res.json(savedProject);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to save project" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  let project = await Project.findById(req.params.id);
+  if (!project) {
+    return res.status(404).json({ message: "Project not found" });
+  }
+
+  const result = await project.remove();
+  console.log(result);
+  res.json({ message: "Project deleted" });
+});
+
 export default router;
