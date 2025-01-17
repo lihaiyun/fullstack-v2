@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
   let data = req.body;
   try {
     data = await projectSchema.validate(data, { abortEarly: false });
-    console.log(data);
+    //console.log(data);
   } catch (err) {
     return res.status(400).json({ message: err.errors.join(", ") });
   }
