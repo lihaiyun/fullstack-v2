@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   let findQuery = {};
-  // Search projects by name or description
+  // Search projects by name or description (case-insensitive)
   if (req.query.search) {
     findQuery = {
       $or: [
