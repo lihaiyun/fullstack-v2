@@ -5,3 +5,6 @@ npm create vite client
 cd client  
 npm install  
 npm run dev  
+
+## Install Packages
+npm i @chakra-ui/react @emotion/react  
