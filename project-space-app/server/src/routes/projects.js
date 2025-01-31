@@ -92,9 +92,6 @@ router.put("/:id", validateToken, async (req, res) => {
   }
 
   // Check if the user is the owner of the project
-  if (!project.owner) {
-    return res.status(403).json({ message: "Permission denied" });
-  }
   if (project.owner.toString() !== req.user._id) {
     return res.status(403).json({ message: "Permission denied" });
   }
@@ -123,9 +120,6 @@ router.delete("/:id", validateToken, async (req, res) => {
   }
 
   // Check if the user is the owner of the project
-  if (!project.owner) {
-    return res.status(403).json({ message: "Permission denied" });
-  }
   if (project.owner.toString() !== req.user._id) {
     return res.status(403).json({ message: "Permission denied" });
   }
