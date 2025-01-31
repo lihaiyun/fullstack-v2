@@ -9,9 +9,9 @@ const projectSchema = yup.object().shape({
   name: yup.string().trim()
     .required('Name is required')  
     .min(3, 'Name must be at least 3 characters')
-    .max(50, 'Name must be at most 100 characters'),
+    .max(100, 'Name must be at most 100 characters'),
   description: yup.string()
-    .max(200, 'Description must be at most 500 characters'),
+    .max(500, 'Description must be at most 500 characters'),
   dueDate: yup.date()
     .required('Due date is required'),
   status: yup.string()

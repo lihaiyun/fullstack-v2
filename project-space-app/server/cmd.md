@@ -7,3 +7,5 @@ npm i nodemon --save-dev
 npm i cors  
 npm i dotenv  
 npm i mongoose  
+npm i bcrypt  
+npm i jsonwebtoken  

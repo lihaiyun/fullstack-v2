@@ -16,7 +16,12 @@ const projectSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true
-  }
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  } // Reference to the User model
 }, {
   versionKey: false, // Don't add __v to a new document
   timestamps: true  // Enables `createdAt` and `updatedAt`

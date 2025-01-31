@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 
 // Import routers
 import projectsRouter from './routes/projects.js';
+import usersRouter from './routes/users.js';
 
 // Import database connection
 import { connectToDatabase } from './db.js';
@@ -26,7 +27,9 @@ app.get('/', (req, res) => {
   res.send('Welcome to the project space!');
 });
 
+// Use the routers
 app.use('/projects', projectsRouter);
+app.use('/users', usersRouter);
 
 // Use async function to connect to the database
 const startServer = async () => {
