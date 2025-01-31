@@ -6,5 +6,5 @@ cd client
 npm install  
 npm run dev  
 
-## Install Packages
-npm i @chakra-ui/react @emotion/react  
+## Set up Chakra UI for Vite
+https://chakra-ui.com/docs/get-started/frameworks/vite  
