@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import User from "../models/user.js";
+import { validateToken } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -102,6 +103,10 @@ router.post("/login", async (req, res) => {
         accessToken,
         user: userInfo
     });
+});
+
+router.get("/auth", validateToken, async (req, res) => {
+    res.json({user: req.user});
 });
 
 export default router;
