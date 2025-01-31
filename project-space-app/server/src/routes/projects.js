@@ -2,6 +2,7 @@ import express from "express";
 import yup from "yup";
 
 import Project from "../models/project.js";
+import { validateToken } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const projectSchema = yup.object().shape({
     .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateToken, async (req, res) => {
   let data = req.body;
   try {
     data = await projectSchema.validate(data, { abortEarly: false });
@@ -34,6 +35,7 @@ router.post("/", async (req, res) => {
     description,
     dueDate,
     status,
+    owner: req.user._id,
   });
 
   try {
@@ -61,19 +63,20 @@ router.get("/", async (req, res) => {
     findQuery.status = req.query.status;
   }
 
-  let projects = await Project.find(findQuery).sort({ dueDate: 1 });
+  let projects = await Project.find(findQuery).populate("owner", "name email")
+    .sort({ dueDate: 1 });
   res.json(projects);
 });
 
 router.get("/:id", async (req, res) => {
-  let project = await Project.findById(req.params.id);
+  let project = await Project.findById(req.params.id).populate("owner", "name email");
   if (!project) {
     return res.status(404).json({ message: "Project not found" });
   }
   res.json(project);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", validateToken, async (req, res) => {
   let data = req.body;
   try {
     data = await projectSchema.validate(data, { abortEarly: false });
@@ -81,12 +84,22 @@ router.put("/:id", async (req, res) => {
     return res.status(400).json({ message: err.errors.join(", ") });
   }
 
-  const { name, description, dueDate, status } = data;
-  let project = await Project.findById(req.params.id);
+  // Check if the project exists  
+  const id = req.params.id;
+  let project = await Project.findById(id);
   if (!project) {
     return res.status(404).json({ message: "Project not found" });
   }
 
+  // Check if the user is the owner of the project
+  if (!project.owner) {
+    return res.status(403).json({ message: "Permission denied" });
+  }
+  if (project.owner.toString() !== req.user._id) {
+    return res.status(403).json({ message: "Permission denied" });
+  }
+
+  const { name, description, dueDate, status } = data;
   project.name = name;
   project.description = description;
   project.dueDate = dueDate;
@@ -101,9 +114,30 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
-  const result = await Project.deleteOne({ _id: req.params.id });
-  res.json(result);
+router.delete("/:id", validateToken, async (req, res) => {
+  // Check if the project exists
+  const id = req.params.id;
+  let project = await Project.findById(id);
+  if (!project) {
+    return res.status(404).json({ message: "Project not found" });
+  }
+
+  // Check if the user is the owner of the project
+  if (!project.owner) {
+    return res.status(403).json({ message: "Permission denied" });
+  }
+  if (project.owner.toString() !== req.user._id) {
+    return res.status(403).json({ message: "Permission denied" });
+  }
+
+  try {
+    const result = await Project.deleteOne({ _id: id });
+    res.json(result);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to delete project" });
+  }
 });
 
 export default router;
