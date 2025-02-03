@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 // Import routers
 import projectsRouter from './routes/projects.js';
 import usersRouter from './routes/users.js';
+import filesRouter from './routes/files.js';
 
 // Import database connection
 import { connectToDatabase } from './db.js';
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 // Use the routers
 app.use('/projects', projectsRouter);
 app.use('/users', usersRouter);
+app.use('/files', filesRouter);
 
 // Use async function to connect to the database
 const startServer = async () => {

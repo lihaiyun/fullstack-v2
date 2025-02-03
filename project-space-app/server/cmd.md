@@ -9,3 +9,4 @@ npm i dotenv
 npm i mongoose  
 npm i bcrypt  
 npm i jsonwebtoken  
+npm i multer cloudinary multer-storage-cloudinary  
