@@ -18,6 +18,8 @@ const projectSchema = yup.object().shape({
   status: yup.string()
     .required('Status is required')
     .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
+  imageId: yup.string().max(100),
+  imageUrl: yup.string().max(200)
 });
 
 router.post("/", validateToken, async (req, res) => {
@@ -29,12 +31,14 @@ router.post("/", validateToken, async (req, res) => {
     return res.status(400).json({ message: err.errors.join(", ") });
   }
 
-  const { name, description, dueDate, status } = data;
+  const { name, description, dueDate, status, imageId, imageUrl } = data;
   const newProject = new Project({
     name,
     description,
     dueDate,
     status,
+    imageId,
+    imageUrl,
     owner: req.user._id,
   });
 
@@ -96,11 +100,13 @@ router.put("/:id", validateToken, async (req, res) => {
     return res.status(403).json({ message: "Permission denied" });
   }
 
-  const { name, description, dueDate, status } = data;
+  const { name, description, dueDate, status, imageId, imageUrl } = data;
   project.name = name;
   project.description = description;
   project.dueDate = dueDate;
   project.status = status;
+  project.imageId = imageId;
+  project.imageUrl = imageUrl;
 
   try {
     const savedProject = await project.save();

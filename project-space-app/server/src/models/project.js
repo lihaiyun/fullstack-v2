@@ -17,6 +17,12 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  imageId: {
+    type: String
+  },
+  imageUrl: {
+    type: String
+  },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
