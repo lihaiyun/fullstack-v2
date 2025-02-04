@@ -8,11 +8,11 @@ import * as yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function EditTutorial() {
+function EditProject() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [tutorial, setTutorial] = useState({
+    const [project, setProject] = useState({
         title: "",
         description: ""
     });
@@ -20,15 +20,15 @@ function EditTutorial() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        http.get(`/tutorial/${id}`).then((res) => {
-            setTutorial(res.data);
+        http.get(`/project/${id}`).then((res) => {
+            setProject(res.data);
             setImageFile(res.data.imageFile);
             setLoading(false);
         });
     }, []);
 
     const formik = useFormik({
-        initialValues: tutorial,
+        initialValues: project,
         enableReinitialize: true,
         validationSchema: yup.object({
             title: yup.string().trim()
@@ -46,10 +46,10 @@ function EditTutorial() {
             }
             data.title = data.title.trim();
             data.description = data.description.trim();
-            http.put(`/tutorial/${id}`, data)
+            http.put(`/project/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/tutorials");
+                    navigate("/projects");
                 });
         }
     });
@@ -64,11 +64,11 @@ function EditTutorial() {
         setOpen(false);
     };
 
-    const deleteTutorial = () => {
-        http.delete(`/tutorial/${id}`)
+    const deleteProject = () => {
+        http.delete(`/project/${id}`)
             .then((res) => {
                 console.log(res.data);
-                navigate("/tutorials");
+                navigate("/projects");
             });
     }
 
@@ -99,7 +99,7 @@ function EditTutorial() {
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Edit Tutorial
+                Edit Project
             </Typography>
             {
                 !loading && (
@@ -138,7 +138,7 @@ function EditTutorial() {
                                     {
                                         imageFile && (
                                             <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                                                <img alt="tutorial"
+                                                <img alt="project"
                                                     src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}>
                                                 </img>
                                             </Box>
@@ -162,11 +162,11 @@ function EditTutorial() {
 
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
-                    Delete Tutorial
+                    Delete Project
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete this tutorial?
+                        Are you sure you want to delete this project?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -175,7 +175,7 @@ function EditTutorial() {
                         Cancel
                     </Button>
                     <Button variant="contained" color="error"
-                        onClick={deleteTutorial}>
+                        onClick={deleteProject}>
                         Delete
                     </Button>
                 </DialogActions>
@@ -186,4 +186,4 @@ function EditTutorial() {
     );
 }
 
-export default EditTutorial;
+export default EditProject;

@@ -7,7 +7,7 @@ import http from '../http';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function AddTutorial() {
+function AddProject() {
     const navigate = useNavigate();
     const [imageFile, setImageFile] = useState(null);
 
@@ -32,10 +32,10 @@ function AddTutorial() {
             }
             data.title = data.title.trim();
             data.description = data.description.trim();
-            http.post("/tutorial", data)
+            http.post("/project", data)
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/tutorials");
+                    navigate("/projects");
                 });
         }
     });
@@ -67,7 +67,7 @@ function AddTutorial() {
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Add Tutorial
+                Add Project
             </Typography>
             <Box component="form" onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2}>
@@ -104,7 +104,7 @@ function AddTutorial() {
                             {
                                 imageFile && (
                                     <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                                        <img alt="tutorial"
+                                        <img alt="project"
                                             src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}>
                                         </img>
                                     </Box>
@@ -125,4 +125,4 @@ function AddTutorial() {
     );
 }
 
-export default AddTutorial;
+export default AddProject;

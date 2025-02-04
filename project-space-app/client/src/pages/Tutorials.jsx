@@ -7,8 +7,8 @@ import dayjs from 'dayjs';
 import UserContext from '../contexts/UserContext';
 import global from '../global';
 
-function Tutorials() {
-    const [tutorialList, setTutorialList] = useState([]);
+function Projects() {
+    const [projectList, setProjectList] = useState([]);
     const [search, setSearch] = useState('');
     const { user } = useContext(UserContext);
 
@@ -16,41 +16,41 @@ function Tutorials() {
         setSearch(e.target.value);
     };
 
-    const getTutorials = () => {
-        http.get('/tutorial').then((res) => {
-            setTutorialList(res.data);
+    const getProjects = () => {
+        http.get('/project').then((res) => {
+            setProjectList(res.data);
         });
     };
 
-    const searchTutorials = () => {
-        http.get(`/tutorial?search=${search}`).then((res) => {
-            setTutorialList(res.data);
+    const searchProjects = () => {
+        http.get(`/project?search=${search}`).then((res) => {
+            setProjectList(res.data);
         });
     };
 
     useEffect(() => {
-        getTutorials();
+        getProjects();
     }, []);
 
     const onSearchKeyDown = (e) => {
         if (e.key === "Enter") {
-            searchTutorials();
+            searchProjects();
         }
     };
 
     const onClickSearch = () => {
-        searchTutorials();
+        searchProjects();
     }
 
     const onClickClear = () => {
         setSearch('');
-        getTutorials();
+        getProjects();
     };
 
     return (
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
-                Tutorials
+                Projects
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -68,7 +68,7 @@ function Tutorials() {
                 <Box sx={{ flexGrow: 1 }} />
                 {
                     user && (
-                        <Link to="/addtutorial">
+                        <Link to="/addproject">
                             <Button variant='contained'>
                                 Add
                             </Button>
@@ -79,15 +79,15 @@ function Tutorials() {
 
             <Grid container spacing={2}>
                 {
-                    tutorialList.map((tutorial, i) => {
+                    projectList.map((project, i) => {
                         return (
-                            <Grid size={{xs:12, md:6, lg:4}} key={tutorial.id}>
+                            <Grid size={{xs:12, md:6, lg:4}} key={project.id}>
                                 <Card>
                                     {
-                                        tutorial.imageFile && (
+                                        project.imageFile && (
                                             <Box className="aspect-ratio-container">
-                                                <img alt="tutorial"
-                                                    src={`${import.meta.env.VITE_FILE_BASE_URL}${tutorial.imageFile}`}>
+                                                <img alt="project"
+                                                    src={`${import.meta.env.VITE_FILE_BASE_URL}${project.imageFile}`}>
                                                 </img>
                                             </Box>
                                         )
@@ -95,11 +95,11 @@ function Tutorials() {
                                     <CardContent>
                                         <Box sx={{ display: 'flex', mb: 1 }}>
                                             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                                                {tutorial.title}
+                                                {project.title}
                                             </Typography>
                                             {
-                                                user && user.id === tutorial.userId && (
-                                                    <Link to={`/edittutorial/${tutorial.id}`}>
+                                                user && user.id === project.userId && (
+                                                    <Link to={`/editproject/${project.id}`}>
                                                         <IconButton color="primary" sx={{ padding: '4px' }}>
                                                             <Edit />
                                                         </IconButton>
@@ -111,18 +111,18 @@ function Tutorials() {
                                             color="text.secondary">
                                             <AccountCircle sx={{ mr: 1 }} />
                                             <Typography>
-                                                {tutorial.user?.name}
+                                                {project.user?.name}
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                                             color="text.secondary">
                                             <AccessTime sx={{ mr: 1 }} />
                                             <Typography>
-                                                {dayjs(tutorial.createdAt).format(global.datetimeFormat)}
+                                                {dayjs(project.createdAt).format(global.datetimeFormat)}
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-                                            {tutorial.description}
+                                            {project.description}
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -135,4 +135,4 @@ function Tutorials() {
     );
 }
 
-export default Tutorials;
+export default Projects;
