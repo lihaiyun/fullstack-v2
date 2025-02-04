@@ -81,13 +81,13 @@ function Projects() {
                 {
                     projectList.map((project, i) => {
                         return (
-                            <Grid size={{xs:12, md:6, lg:4}} key={project.id}>
+                            <Grid size={{xs:12, md:6, lg:4}} key={project._id}>
                                 <Card>
                                     {
                                         project.imageFile && (
                                             <Box className="aspect-ratio-container">
                                                 <img alt="project"
-                                                    src={`${import.meta.env.VITE_FILE_BASE_URL}${project.imageFile}`}>
+                                                    src={project.imageUrl}>
                                                 </img>
                                             </Box>
                                         )
