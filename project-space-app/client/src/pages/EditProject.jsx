@@ -20,7 +20,7 @@ function EditProject() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        http.get(`/project/${id}`).then((res) => {
+        http.get(`/projects/${id}`).then((res) => {
             setProject(res.data);
             setImageFile(res.data.imageFile);
             setLoading(false);
@@ -46,7 +46,7 @@ function EditProject() {
             }
             data.title = data.title.trim();
             data.description = data.description.trim();
-            http.put(`/project/${id}`, data)
+            http.put(`/projects/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     navigate("/projects");
@@ -65,7 +65,7 @@ function EditProject() {
     };
 
     const deleteProject = () => {
-        http.delete(`/project/${id}`)
+        http.delete(`/projects/${id}`)
             .then((res) => {
                 console.log(res.data);
                 navigate("/projects");
@@ -82,7 +82,7 @@ function EditProject() {
 
             let formData = new FormData();
             formData.append('file', file);
-            http.post('/file/upload', formData, {
+            http.post('/files/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

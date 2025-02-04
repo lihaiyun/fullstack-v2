@@ -17,13 +17,13 @@ function Projects() {
     };
 
     const getProjects = () => {
-        http.get('/project').then((res) => {
+        http.get('/projects').then((res) => {
             setProjectList(res.data);
         });
     };
 
     const searchProjects = () => {
-        http.get(`/project?search=${search}`).then((res) => {
+        http.get(`/projects?search=${search}`).then((res) => {
             setProjectList(res.data);
         });
     };

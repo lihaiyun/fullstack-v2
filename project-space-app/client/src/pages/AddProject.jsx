@@ -32,7 +32,7 @@ function AddProject() {
             }
             data.title = data.title.trim();
             data.description = data.description.trim();
-            http.post("/project", data)
+            http.post("/projects", data)
                 .then((res) => {
                     console.log(res.data);
                     navigate("/projects");
@@ -50,7 +50,7 @@ function AddProject() {
 
             let formData = new FormData();
             formData.append('file', file);
-            http.post('/file/upload', formData, {
+            http.post('/files/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

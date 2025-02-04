@@ -70,7 +70,7 @@ function MyForm() {
 
             let formData = new FormData();
             formData.append('file', file);
-            http.post('/file/upload', formData, {
+            http.post('/files/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

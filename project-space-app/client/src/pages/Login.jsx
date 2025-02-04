@@ -30,7 +30,7 @@ function Login() {
         onSubmit: (data) => {
             data.email = data.email.trim().toLowerCase();
             data.password = data.password.trim();
-            http.post("/user/login", data)
+            http.post("/users/login", data)
                 .then((res) => {
                     localStorage.setItem("accessToken", res.data.accessToken);
                     setUser(res.data.user);
