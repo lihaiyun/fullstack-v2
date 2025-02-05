@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import dayjs from 'dayjs';
-import { FormControl } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 // npm install @mui/x-date-pickers
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -19,9 +19,10 @@ function EditProject() {
     const navigate = useNavigate();
 
     const [project, setProject] = useState({
-        name: "",
-        description: "",
-        dueDate: dayjs().add(1, 'month')
+        name: '',
+        description: '',
+        dueDate: dayjs().add(1, 'month'),
+        status: '',
     });
     const [loading, setLoading] = useState(true);
     const [uploadingImage, setUploadingImage] = useState(false);
@@ -148,7 +149,7 @@ function EditProject() {
                                 <FormControl fullWidth margin="dense">
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker format="DD/MM/YYYY"
-                                            label="Select Due Date"
+                                            label="Due Date"
                                             name="dueDate"
                                             value={formik.values.dueDate}
                                             onChange={(dueDate) => formik.setFieldValue('dueDate', dueDate)}
@@ -161,6 +162,21 @@ function EditProject() {
                                             }}
                                         />
                                     </LocalizationProvider>
+                                </FormControl>
+                                <FormControl fullWidth margin="dense"
+                                    error={formik.touched.status && Boolean(formik.errors.status)}>
+                                    <InputLabel>Status...</InputLabel>
+                                    <Select label="Status..."
+                                        name="status"
+                                        value={formik.values.status}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                    >
+                                        <MenuItem value={'not-started'}>Not Started</MenuItem>
+                                        <MenuItem value={'in-progress'}>In Progress</MenuItem>
+                                        <MenuItem value={'completed'}>Completed</MenuItem>
+                                    </Select>
+                                    <FormHelperText>{formik.touched.status && formik.errors.status}</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid size={{xs:12, md:6, lg:4}}>

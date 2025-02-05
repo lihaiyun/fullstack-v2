@@ -41,11 +41,18 @@ function Projects() {
 
     const onClickSearch = () => {
         searchProjects();
-    }
+    };
 
     const onClickClear = () => {
         setSearch('');
         getProjects();
+    };
+
+    function formatText(text) {
+        return text
+          .split('-') // Split by "-"
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+          .join(' '); // Join with space
     };
 
     return (
@@ -118,8 +125,11 @@ function Projects() {
                                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                                             color="text.secondary">
                                             <AccessTime sx={{ mr: 1 }} />
-                                            <Typography>
+                                            <Typography sx={{ flexGrow: 1 }}>
                                                 {dayjs(project.dueDate).format(global.dateFormat)}
+                                            </Typography>
+                                            <Typography>
+                                                {formatText(project.status)}
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
