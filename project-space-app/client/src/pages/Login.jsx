@@ -8,6 +8,18 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserContext from '../contexts/UserContext';
 
+const loginSchema = yup.object().shape({
+    email: yup.string().trim()
+        .required('Email is required')
+        .email('Email must be a valid email address')
+        .max(100, 'Email must be at most 100 characters'),
+    password: yup.string().trim()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters')
+        .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).*$/, 'Password must contain at least one letter and one number')
+        .max(50, 'Password must be at most 50 characters')
+});
+
 function Login() {
     const navigate = useNavigate();
     const { setUser } = useContext(UserContext);
@@ -17,16 +29,7 @@ function Login() {
             email: "",
             password: ""
         },
-        validationSchema: yup.object({
-            email: yup.string().trim()
-                .email('Enter a valid email')
-                .max(50, 'Email must be at most 50 characters')
-                .required('Email is required'),
-            password: yup.string().trim()
-                .min(8, 'Password must be at least 8 characters')
-                .max(50, 'Password must be at most 50 characters')
-                .required('Password is required')
-        }),
+        validationSchema: loginSchema,
         onSubmit: (data) => {
             data.email = data.email.trim().toLowerCase();
             data.password = data.password.trim();

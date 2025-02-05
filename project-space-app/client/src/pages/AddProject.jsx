@@ -6,32 +6,57 @@ import * as yup from 'yup';
 import http from '../http';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import dayjs from 'dayjs';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+// npm install @mui/x-date-pickers
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+const projectSchema = yup.object().shape({
+    name: yup.string().trim()
+        .required('Name is required')  
+        .min(3, 'Name must be at least 3 characters')
+        .max(100, 'Name must be at most 100 characters'),
+    description: yup.string()
+        .max(500, 'Description must be at most 500 characters'),
+    dueDate: yup.date()
+        .required('Due date is required'),
+    status: yup.string()
+        .required('Status is required')
+        .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
+    imageId: yup.string().max(100),
+    imageUrl: yup.string().max(200)
+});
 
 function AddProject() {
     const navigate = useNavigate();
-    const [imageFile, setImageFile] = useState(null);
+
+    const [project, setProject] = useState({
+        name: '',
+        description: '',
+        dueDate: dayjs().add(1, 'month'),
+        status: '',
+    });
+    const [uploadingImage, setUploadingImage] = useState(false);
+
+    const setImage = (data) => {
+        setProject({ ...project, 
+            imageId: data.imageId,
+            imageUrl: data.imageUrl
+         });
+    }
 
     const formik = useFormik({
-        initialValues: {
-            title: "",
-            description: ""
-        },
-        validationSchema: yup.object({
-            title: yup.string().trim()
-                .min(3, 'Title must be at least 3 characters')
-                .max(100, 'Title must be at most 100 characters')
-                .required('Title is required'),
-            description: yup.string().trim()
-                .min(3, 'Description must be at least 3 characters')
-                .max(500, 'Description must be at most 500 characters')
-                .required('Description is required')
-        }),
+        initialValues: project,
+        enableReinitialize: true,
+        validationSchema: projectSchema,
         onSubmit: (data) => {
-            if (imageFile) {
-                data.imageFile = imageFile;
-            }
-            data.title = data.title.trim();
+            data.name = data.name.trim();
             data.description = data.description.trim();
+            // Convert dueDate to string
+            data.dueDate = data.dueDate.format('YYYY-MM-DD');
+            //console.log(data);
             http.post("/projects", data)
                 .then((res) => {
                     console.log(res.data);
@@ -48,6 +73,7 @@ function AddProject() {
                 return;
             }
 
+            setUploadingImage(true);
             let formData = new FormData();
             formData.append('file', file);
             http.post('/files/upload', formData, {
@@ -56,10 +82,12 @@ function AddProject() {
                 }
             })
                 .then((res) => {
-                    setImageFile(res.data.filename);
+                    setImage(res.data);
+                    setUploadingImage(false);
                 })
                 .catch(function (error) {
                     console.log(error.response);
+                    setUploadingImage(false);
                 });
         }
     };
@@ -74,13 +102,13 @@ function AddProject() {
                     <Grid size={{xs:12, md:6, lg:8}}>
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
-                            label="Title"
-                            name="title"
-                            value={formik.values.title}
+                            label="Name"
+                            name="name"
+                            value={formik.values.name}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            error={formik.touched.title && Boolean(formik.errors.title)}
-                            helperText={formik.touched.title && formik.errors.title}
+                            error={formik.touched.name && Boolean(formik.errors.name)}
+                            helperText={formik.touched.name && formik.errors.name}
                         />
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
@@ -93,6 +121,38 @@ function AddProject() {
                             error={formik.touched.description && Boolean(formik.errors.description)}
                             helperText={formik.touched.description && formik.errors.description}
                         />
+                        <FormControl fullWidth margin="dense">
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker format="DD/MM/YYYY"
+                                    label="Due Date"
+                                    name="dueDate"
+                                    value={formik.values.dueDate}
+                                    onChange={(dueDate) => formik.setFieldValue('dueDate', dueDate)}
+                                    onBlur={() => formik.setFieldTouched('dueDate', true)}
+                                    slotProps={{
+                                        textField: {
+                                            error: formik.touched.dueDate && Boolean(formik.errors.dueDate),
+                                            helperText: formik.touched.dueDate && formik.errors.dueDate
+                                        }
+                                    }}
+                                />
+                            </LocalizationProvider>
+                        </FormControl>
+                        <FormControl fullWidth margin="dense"
+                            error={formik.touched.status && Boolean(formik.errors.status)}>
+                            <InputLabel>Status</InputLabel>
+                            <Select label="Status"
+                                name="status"
+                                value={formik.values.status}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                            >
+                                <MenuItem value={'not-started'}>Not Started</MenuItem>
+                                <MenuItem value={'in-progress'}>In Progress</MenuItem>
+                                <MenuItem value={'completed'}>Completed</MenuItem>
+                            </Select>
+                            <FormHelperText>{formik.touched.status && formik.errors.status}</FormHelperText>
+                        </FormControl>
                     </Grid>
                     <Grid size={{xs:12, md:6, lg:4}}>
                         <Box sx={{ textAlign: 'center', mt: 2 }} >
@@ -102,10 +162,17 @@ function AddProject() {
                                     onChange={onFileChange} />
                             </Button>
                             {
-                                imageFile && (
+                                uploadingImage && (
+                                    <Typography variant="body2" sx={{ mt: 1 }}>
+                                        Uploading image...
+                                    </Typography>   
+                                )
+                            }
+                            {
+                                !uploadingImage && project.imageUrl && (
                                     <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                                         <img alt="project"
-                                            src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}>
+                                            src={project.imageUrl}>
                                         </img>
                                     </Box>
                                 )

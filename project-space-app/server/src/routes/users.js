@@ -22,7 +22,7 @@ const registerSchema = yup.object().shape({
         .min(8, 'Password must be at least 8 characters')
         .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).*$/, 'Password must contain at least one letter and one number')
         .max(50, 'Password must be at most 50 characters')
-    });
+});
 
 const loginSchema = yup.object().shape({
     email: yup.string().trim()

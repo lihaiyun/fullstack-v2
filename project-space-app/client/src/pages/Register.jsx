@@ -7,6 +7,25 @@ import http from '../http';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const registerSchema = yup.object().shape({
+    name: yup.string().trim()
+        .required('Name is required')  
+        .matches(/^[a-zA-Z '-,.]+$/, 'Name must only contain letters, spaces and characters: \'-,.')
+        .max(100, 'Name must be at most 100 characters'),
+    email: yup.string().trim()
+        .required('Email is required')
+        .email('Email must be a valid email address')
+        .max(100, 'Email must be at most 100 characters'),
+    password: yup.string().trim()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters')
+        .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).*$/, 'Password must contain at least one letter and one number')
+        .max(50, 'Password must be at most 50 characters'),
+    confirmPassword: yup.string().trim()
+        .required('Confirm password is required')
+        .oneOf([yup.ref('password')], 'Passwords must match')
+});
+
 function Register() {
     const navigate = useNavigate();
 
@@ -17,27 +36,7 @@ function Register() {
             password: "",
             confirmPassword: ""
         },
-        validationSchema: yup.object({
-            name: yup.string().trim()
-                .min(3, 'Name must be at least 3 characters')
-                .max(50, 'Name must be at most 50 characters')
-                .required('Name is required')
-                .matches(/^[a-zA-Z '-,.]+$/,
-                    "Name only allow letters, spaces and characters: ' - , ."),
-            email: yup.string().trim()
-                .email('Enter a valid email')
-                .max(50, 'Email must be at most 50 characters')
-                .required('Email is required'),
-            password: yup.string().trim()
-                .min(8, 'Password must be at least 8 characters')
-                .max(50, 'Password must be at most 50 characters')
-                .required('Password is required')
-                .matches(/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/,
-                    "Password at least 1 letter and 1 number"),
-            confirmPassword: yup.string().trim()
-                .required('Confirm password is required')
-                .oneOf([yup.ref('password')], 'Passwords must match')
-        }),
+        validationSchema: registerSchema,
         onSubmit: (data) => {
             data.name = data.name.trim();
             data.email = data.email.trim().toLowerCase();

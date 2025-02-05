@@ -14,6 +14,22 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+const projectSchema = yup.object().shape({
+    name: yup.string().trim()
+        .required('Name is required')  
+        .min(3, 'Name must be at least 3 characters')
+        .max(100, 'Name must be at most 100 characters'),
+    description: yup.string()
+        .max(500, 'Description must be at most 500 characters'),
+    dueDate: yup.date()
+        .required('Due date is required'),
+    status: yup.string()
+        .required('Status is required')
+        .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
+    imageId: yup.string().max(100),
+    imageUrl: yup.string().max(200)
+});
+
 function EditProject() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -46,16 +62,7 @@ function EditProject() {
     const formik = useFormik({
         initialValues: project,
         enableReinitialize: true,
-        validationSchema: yup.object({
-            name: yup.string().trim()
-                .min(3, 'Title must be at least 3 characters')
-                .max(100, 'Title must be at most 100 characters')
-                .required('Title is required'),
-            description: yup.string().trim()
-                .min(3, 'Description must be at least 3 characters')
-                .max(500, 'Description must be at most 500 characters')
-                .required('Description is required')
-        }),
+        validationSchema: projectSchema,
         onSubmit: (data) => {
             data.name = data.name.trim();
             data.description = data.description.trim();
@@ -165,8 +172,8 @@ function EditProject() {
                                 </FormControl>
                                 <FormControl fullWidth margin="dense"
                                     error={formik.touched.status && Boolean(formik.errors.status)}>
-                                    <InputLabel>Status...</InputLabel>
-                                    <Select label="Status..."
+                                    <InputLabel>Status</InputLabel>
+                                    <Select label="Status"
                                         name="status"
                                         value={formik.values.status}
                                         onChange={formik.handleChange}
