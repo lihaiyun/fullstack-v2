@@ -18,7 +18,7 @@ function Projects() {
 
     const getProjects = () => {
         http.get('/projects').then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             setProjectList(res.data);
         });
     };
