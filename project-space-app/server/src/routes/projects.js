@@ -73,7 +73,12 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  let project = await Project.findById(req.params.id).populate("owner", "name email");
+  const id = req.params.id;
+  if (id === "undefined") {
+    return res.status(400).json({ message: "Project ID is required" });
+  }
+
+  let project = await Project.findById(id).populate("owner", "name email");
   if (!project) {
     return res.status(404).json({ message: "Project not found" });
   }
@@ -88,8 +93,11 @@ router.put("/:id", validateToken, async (req, res) => {
     return res.status(400).json({ message: err.errors.join(", ") });
   }
 
-  // Check if the project exists  
+  // Check if the project exists
   const id = req.params.id;
+  if (id === "undefined") {
+    return res.status(400).json({ message: "Project ID is required" });
+  }
   let project = await Project.findById(id);
   if (!project) {
     return res.status(404).json({ message: "Project not found" });
@@ -120,6 +128,9 @@ router.put("/:id", validateToken, async (req, res) => {
 router.delete("/:id", validateToken, async (req, res) => {
   // Check if the project exists
   const id = req.params.id;
+  if (id === "undefined") {
+    return res.status(400).json({ message: "Project ID is required" });
+  }
   let project = await Project.findById(id);
   if (!project) {
     return res.status(404).json({ message: "Project not found" });
