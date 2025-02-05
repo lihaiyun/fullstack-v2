@@ -9,6 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import dayjs from 'dayjs';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 // npm install @mui/x-date-pickers
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -195,9 +196,9 @@ function EditProject() {
                                     </Button>
                                     {
                                         uploadingImage && (
-                                            <Typography variant="body2" sx={{ mt: 1 }}>
-                                                Uploading image...
-                                            </Typography>   
+                                            <Box sx={{ mt: 2 }}>
+                                                <CircularProgress />
+                                            </Box>
                                         )
                                     }
                                     {
