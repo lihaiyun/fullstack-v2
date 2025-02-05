@@ -21,7 +21,7 @@ router.post("/upload", validateToken, upload, async (req, res) => {
         { fetch_format: "auto" }, // Automatic file format
       ],
     });
-    console.log(cldRes);
+    //console.log(cldRes);
 
     // Return the public ID and URL of the uploaded image
     res.json({
