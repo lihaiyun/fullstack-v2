@@ -13,16 +13,22 @@ function EditProject() {
     const navigate = useNavigate();
 
     const [project, setProject] = useState({
-        title: "",
+        name: "",
         description: ""
     });
-    const [imageFile, setImageFile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [uploadingImage, setUploadingImage] = useState(false);
+
+    const setImage = (data) => {
+        setProject({ ...project, 
+            imageId: data.imageId,
+            imageUrl: data.imageUrl
+         });
+    }
 
     useEffect(() => {
         http.get(`/projects/${id}`).then((res) => {
             setProject(res.data);
-            setImageFile(res.data.imageFile);
             setLoading(false);
         });
     }, []);
@@ -31,7 +37,7 @@ function EditProject() {
         initialValues: project,
         enableReinitialize: true,
         validationSchema: yup.object({
-            title: yup.string().trim()
+            name: yup.string().trim()
                 .min(3, 'Title must be at least 3 characters')
                 .max(100, 'Title must be at most 100 characters')
                 .required('Title is required'),
@@ -41,11 +47,9 @@ function EditProject() {
                 .required('Description is required')
         }),
         onSubmit: (data) => {
-            if (imageFile) {
-                data.imageFile = imageFile;
-            }
-            data.title = data.title.trim();
+            data.name = data.name.trim();
             data.description = data.description.trim();
+            //console.log(data);
             http.put(`/projects/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
@@ -80,6 +84,7 @@ function EditProject() {
                 return;
             }
 
+            setUploadingImage(true);
             let formData = new FormData();
             formData.append('file', file);
             http.post('/files/upload', formData, {
@@ -88,10 +93,12 @@ function EditProject() {
                 }
             })
                 .then((res) => {
-                    setImageFile(res.data.filename);
+                    setImage(res.data);
+                    setUploadingImage(false);
                 })
                 .catch(function (error) {
                     console.log(error.response);
+                    setUploadingImage(false);
                 });
         }
     };
@@ -108,13 +115,13 @@ function EditProject() {
                             <Grid size={{xs:12, md:6, lg:8}}>
                                 <TextField
                                     fullWidth margin="dense" autoComplete="off"
-                                    label="Title"
-                                    name="title"
-                                    value={formik.values.title}
+                                    label="Name"
+                                    name="name"
+                                    value={formik.values.name}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                    error={formik.touched.title && Boolean(formik.errors.title)}
-                                    helperText={formik.touched.title && formik.errors.title}
+                                    error={formik.touched.name && Boolean(formik.errors.name)}
+                                    helperText={formik.touched.name && formik.errors.name}
                                 />
                                 <TextField
                                     fullWidth margin="dense" autoComplete="off"
@@ -136,10 +143,17 @@ function EditProject() {
                                             onChange={onFileChange} />
                                     </Button>
                                     {
-                                        imageFile && (
+                                        uploadingImage && (
+                                            <Typography variant="body2" sx={{ mt: 1 }}>
+                                                Uploading image...
+                                            </Typography>   
+                                        )
+                                    }
+                                    {
+                                        !uploadingImage && project.imageUrl && (
                                             <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                                                 <img alt="project"
-                                                    src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}>
+                                                    src={project.imageUrl}>
                                                 </img>
                                             </Box>
                                         )

@@ -18,6 +18,7 @@ function Projects() {
 
     const getProjects = () => {
         http.get('/projects').then((res) => {
+            console.log(res.data);
             setProjectList(res.data);
         });
     };
@@ -84,7 +85,7 @@ function Projects() {
                             <Grid size={{xs:12, md:6, lg:4}} key={project._id}>
                                 <Card>
                                     {
-                                        project.imageFile && (
+                                        project.imageUrl && (
                                             <Box className="aspect-ratio-container">
                                                 <img alt="project"
                                                     src={project.imageUrl}>
@@ -95,11 +96,11 @@ function Projects() {
                                     <CardContent>
                                         <Box sx={{ display: 'flex', mb: 1 }}>
                                             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                                                {project.title}
+                                                {project.name}
                                             </Typography>
                                             {
-                                                user && user.id === project.userId && (
-                                                    <Link to={`/editproject/${project.id}`}>
+                                                user && user._id === project.owner._id && (
+                                                    <Link to={`/editproject/${project._id}`}>
                                                         <IconButton color="primary" sx={{ padding: '4px' }}>
                                                             <Edit />
                                                         </IconButton>
@@ -111,7 +112,7 @@ function Projects() {
                                             color="text.secondary">
                                             <AccountCircle sx={{ mr: 1 }} />
                                             <Typography>
-                                                {project.user?.name}
+                                                {project.owner?.name}
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
