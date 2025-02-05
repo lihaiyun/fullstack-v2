@@ -16,45 +16,55 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 function MyForm() {
-    const [imageFile, setImageFile] = useState(null);
+    const [formData, setFormData] = useState({
+        title: 'My title',
+        description: 'My description',
+        price: 0,
+        option: 'A',
+        date: dayjs().add(1, 'day'),
+        time: dayjs().minute(0),
+        datetime: dayjs().add(1, 'day').minute(0),
+        tnc: true
+    });
+    const [uploadingImage, setUploadingImage] = useState(false);
+
+    const setImage = (data) => {
+        setFormData({ ...formData, 
+            imageId: data.imageId,
+            imageUrl: data.imageUrl
+         });
+    }
+
+    const mySchema = yup.object().shape({
+        title: yup.string().trim()
+            .min(3, 'Title must be at least 3 characters')
+            .max(100, 'Title must be at most 100 characters')
+            .required('Title is required'),
+        description: yup.string().trim()
+            .min(3, 'Description must be at least 3 characters')
+            .max(500, 'Description must be at most 500 characters')
+            .required('Description is required'),
+        price: yup.number().min(0).required('Price is required'),
+        option: yup.string().required('Option is required'),
+        date: yup.date().typeError('Invalid date').required('Date is required'),
+        time: yup.date().typeError('Invalid time').required('Time is required'),
+        datetime: yup.date().typeError('Invalid date time').required('Date Time is required'),
+        tnc: yup.boolean().oneOf([true], 'Accept Terms & Conditions is required')
+    });
 
     const formik = useFormik({
-        initialValues: {
-            title: 'My title',
-            description: 'My description',
-            price: 0,
-            option: 'A',
-            date: dayjs().add(1, 'day'),
-            time: dayjs().minute(0),
-            datetime: dayjs().add(1, 'day').minute(0),
-            tnc: true
-        },
-        validationSchema: yup.object({
-            title: yup.string().trim()
-                .min(3, 'Title must be at least 3 characters')
-                .max(100, 'Title must be at most 100 characters')
-                .required('Title is required'),
-            description: yup.string().trim()
-                .min(3, 'Description must be at least 3 characters')
-                .max(500, 'Description must be at most 500 characters')
-                .required('Description is required'),
-            price: yup.number().min(0).required('Price is required'),
-            option: yup.string().required('Option is required'),
-            date: yup.date().typeError('Invalid date').required('Date is required'),
-            time: yup.date().typeError('Invalid time').required('Time is required'),
-            datetime: yup.date().typeError('Invalid date time').required('Date Time is required'),
-            tnc: yup.boolean().oneOf([true], 'Accept Terms & Conditions is required')
-        }),
+        initialValues: formData,
+        enableReinitialize: true,
+        validationSchema: mySchema,
         onSubmit: (data) => {
-            if (imageFile) {
-                data.imageFile = imageFile;
-            }
             // create a new object for submission
             let dataToSubmit = { ...data };
             dataToSubmit.title = data.title.trim();
             dataToSubmit.description = data.description.trim();
+            // Convert date, time and datetime to string
             dataToSubmit.date = data.date.format('YYYY-MM-DD');
             dataToSubmit.time = data.time.format('HH:mm');
+            dataToSubmit.datetime = data.datetime.format();
             console.log(dataToSubmit);
             toast.success('Form submitted successfully');
         }
@@ -68,6 +78,7 @@ function MyForm() {
                 return;
             }
 
+            setUploadingImage(true);
             let formData = new FormData();
             formData.append('file', file);
             http.post('/files/upload', formData, {
@@ -76,10 +87,12 @@ function MyForm() {
                 }
             })
                 .then((res) => {
-                    setImageFile(res.data.filename);
+                    setImage(res.data);
+                    setUploadingImage(false);
                 })
                 .catch(function (error) {
                     console.log(error.response);
+                    setUploadingImage(false);
                 });
         }
     };
@@ -218,10 +231,17 @@ function MyForm() {
                                     onChange={onFileChange} />
                             </Button>
                             {
-                                imageFile && (
+                                uploadingImage && (
+                                    <Typography variant="body2" sx={{ mt: 1 }}>
+                                        Uploading image...
+                                    </Typography>   
+                                )
+                            }
+                            {
+                                !uploadingImage && formData.imageUrl && (
                                     <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                                        <img alt="project"
-                                            src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}>
+                                        <img alt="image"
+                                            src={formData.imageUrl}>
                                         </img>
                                     </Box>
                                 )
