@@ -7,6 +7,12 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import dayjs from 'dayjs';
+import { FormControl } from '@mui/material';
+// npm install @mui/x-date-pickers
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 function EditProject() {
     const { id } = useParams();
@@ -14,7 +20,8 @@ function EditProject() {
 
     const [project, setProject] = useState({
         name: "",
-        description: ""
+        description: "",
+        dueDate: dayjs().add(1, 'month')
     });
     const [loading, setLoading] = useState(true);
     const [uploadingImage, setUploadingImage] = useState(false);
@@ -28,6 +35,8 @@ function EditProject() {
 
     useEffect(() => {
         http.get(`/projects/${id}`).then((res) => {
+            // Convert dueDate to a dayjs object
+            res.data.dueDate = dayjs(res.data.dueDate);
             setProject(res.data);
             setLoading(false);
         });
@@ -49,6 +58,8 @@ function EditProject() {
         onSubmit: (data) => {
             data.name = data.name.trim();
             data.description = data.description.trim();
+            // Convert dueDate to string
+            data.dueDate = data.dueDate.format('YYYY-MM-DD');
             //console.log(data);
             http.put(`/projects/${id}`, data)
                 .then((res) => {
@@ -134,6 +145,23 @@ function EditProject() {
                                     error={formik.touched.description && Boolean(formik.errors.description)}
                                     helperText={formik.touched.description && formik.errors.description}
                                 />
+                                <FormControl fullWidth margin="dense">
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker format="DD/MM/YYYY"
+                                            label="Select Due Date"
+                                            name="dueDate"
+                                            value={formik.values.dueDate}
+                                            onChange={(dueDate) => formik.setFieldValue('dueDate', dueDate)}
+                                            onBlur={() => formik.setFieldTouched('dueDate', true)}
+                                            slotProps={{
+                                                textField: {
+                                                    error: formik.touched.dueDate && Boolean(formik.errors.dueDate),
+                                                    helperText: formik.touched.dueDate && formik.errors.dueDate
+                                                }
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </FormControl>
                             </Grid>
                             <Grid size={{xs:12, md:6, lg:4}}>
                                 <Box sx={{ textAlign: 'center', mt: 2 }} >

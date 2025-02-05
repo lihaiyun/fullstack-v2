@@ -119,7 +119,7 @@ function Projects() {
                                             color="text.secondary">
                                             <AccessTime sx={{ mr: 1 }} />
                                             <Typography>
-                                                {dayjs(project.createdAt).format(global.datetimeFormat)}
+                                                {dayjs(project.dueDate).format(global.dateFormat)}
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
