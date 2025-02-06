@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router';
 import { Box, Typography, Grid2 as Grid, Card, CardContent, Input, IconButton, Button } from '@mui/material';
-import { AccountCircle, AccessTime, Search, Clear, Edit } from '@mui/icons-material';
+import { AccountCircle, CalendarMonth, Search, Clear, Edit } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
 import UserContext from '../contexts/UserContext';
@@ -124,7 +124,7 @@ function Projects() {
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                                             color="text.secondary">
-                                            <AccessTime sx={{ mr: 1 }} />
+                                            <CalendarMonth sx={{ mr: 1 }} />
                                             <Typography sx={{ flexGrow: 1 }}>
                                                 {dayjs(project.dueDate).format(global.dateFormat)}
                                             </Typography>
