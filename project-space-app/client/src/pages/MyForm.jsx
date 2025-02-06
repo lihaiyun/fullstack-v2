@@ -71,30 +71,27 @@ function MyForm() {
         }
     });
 
-    const onFileChange = (e) => {
+    const onFileChange = async (e) => {
         let file = e.target.files[0];
-        if (file) {
-            if (file.size > 1024 * 1024) {
-                toast.error('Maximum file size is 1MB');
-                return;
-            }
+        if (!file) return;
+        if (file.size > 1024 * 1024) {
+            toast.error('Maximum file size is 1MB');
+            return;
+        }
 
-            setUploadingImage(true);
-            let formData = new FormData();
-            formData.append('file', file);
-            http.post('/files/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-                .then((res) => {
-                    setImage(res.data);
-                    setUploadingImage(false);
-                })
-                .catch(function (error) {
-                    console.log(error.response);
-                    setUploadingImage(false);
-                });
+        let formData = new FormData();
+        formData.append("file", file);
+    
+        setUploadingImage(true);
+        try {
+            const res = await http.post("/files/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            setImage(res.data);
+        } catch (error) {
+            console.error("Upload failed:", error.response.data);
+        } finally {
+            setUploadingImage(false);
         }
     };
 
