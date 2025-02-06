@@ -195,19 +195,18 @@ function EditProject() {
                                             onChange={onFileChange} />
                                     </Button>
                                     {
-                                        uploadingImage && (
+                                        uploadingImage ? (
                                             <Box sx={{ mt: 2 }}>
                                                 <CircularProgress />
                                             </Box>
-                                        )
-                                    }
-                                    {
-                                        !uploadingImage && project.imageUrl && (
-                                            <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                                                <img alt="project"
-                                                    src={project.imageUrl}>
-                                                </img>
-                                            </Box>
+                                        ) : (
+                                            project.imageUrl && (
+                                                <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
+                                                    <img alt="project"
+                                                        src={project.imageUrl}>
+                                                    </img>
+                                                </Box>
+                                            )
                                         )
                                     }
                                 </Box>

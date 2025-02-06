@@ -232,19 +232,18 @@ function MyForm() {
                                     onChange={onFileChange} />
                             </Button>
                             {
-                                uploadingImage && (
+                                uploadingImage ? (
                                     <Box sx={{ mt: 2 }}>
                                         <CircularProgress />
                                     </Box>
-                                )
-                            }
-                            {
-                                !uploadingImage && formData.imageUrl && (
-                                    <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                                        <img alt="image"
-                                            src={formData.imageUrl}>
-                                        </img>
-                                    </Box>
+                                ) : (
+                                    formData.imageUrl && (
+                                        <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
+                                            <img alt="project"
+                                                src={formData.imageUrl}>
+                                            </img>
+                                        </Box>
+                                    )
                                 )
                             }
                         </Box>
