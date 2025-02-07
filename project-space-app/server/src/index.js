@@ -29,9 +29,9 @@ app.get('/', (req, res) => {
 });
 
 // Use the routers
-app.use('/projects', projectsRouter);
-app.use('/users', usersRouter);
-app.use('/files', filesRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/files', filesRouter);
 
 // Use async function to connect to the database
 const startServer = async () => {

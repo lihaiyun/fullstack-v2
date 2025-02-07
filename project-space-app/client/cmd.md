@@ -14,3 +14,7 @@ npm rm react-router axios dayjs formik yup react-toastify
 
 npm i @mui/material @emotion/react @emotion/styled @mui/icons-material @mui/x-date-pickers
 npm i react-router axios dayjs formik yup react-toastify
+
+# Deploy to AWS
+npm run build
+http://project-space-app.s3-website-ap-southeast-1.amazonaws.com
