@@ -9,7 +9,16 @@ const theme = createTheme({
         secondary: {
             main: '#f4511e', // Deep Orange 900
         }
-    }
+    },
+    components: {
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              textTransform: 'none', // Disable uppercase text globally
+            },
+          },
+        },
+      },
 });
 
 export default theme;

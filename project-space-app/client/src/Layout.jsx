@@ -18,10 +18,10 @@ function Layout() {
             <AppBar position="static">
                 <Container>
                     <Toolbar disableGutters>
-                        {/* Left side: Brand Name */}
-                        <Typography variant="h6" sx={{ mr: 2 }}>Project Space</Typography>
-
                         {/* Navigation Links */}
+                        <Button color="inherit" component={Link} to="/" sx={{ fontSize: '1.1rem' }} >
+                            Project Space
+                        </Button>
                         <Button color="inherit" component={Link} to="/projects">
                             Projects
                         </Button>
