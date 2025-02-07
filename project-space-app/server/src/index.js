@@ -40,9 +40,9 @@ const startServer = async () => {
     await connectToDatabase();
     
     // Start the Express server after successful connection
-    const PORT = process.env.PORT || 3001;
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+    const port = process.env.APP_PORT || 3001;
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
     });
   } catch (error) {
     console.error('Error starting server:', error);
