@@ -35,27 +35,29 @@ function EditProject() {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    // State to hold project data
     const [project, setProject] = useState({
         name: '',
         description: '',
         dueDate: dayjs().add(1, 'month'),
         status: '',
     });
+    // State to manage loading state
     const [loading, setLoading] = useState(true);
+    // State to hold image file data
+    const [imageFile, setImageFile] = useState(null);
+    // State to manage uploading state
     const [uploadingImage, setUploadingImage] = useState(false);
-
-    const setImage = (data) => {
-        setProject({ ...project, 
-            imageId: data.imageId,
-            imageUrl: data.imageUrl
-         });
-    }
 
     useEffect(() => {
         http.get(`/projects/${id}`).then((res) => {
             // Convert dueDate to a dayjs object
             res.data.dueDate = dayjs(res.data.dueDate);
             setProject(res.data);
+            setImageFile({
+                imageId: res.data.imageId,
+                imageUrl: res.data.imageUrl
+            });
             setLoading(false);
         });
     }, []);
@@ -69,6 +71,11 @@ function EditProject() {
             data.description = data.description.trim();
             // Convert dueDate to string
             data.dueDate = data.dueDate.format('YYYY-MM-DD');
+            // If image is uploaded, add imageId and imageUrl to data
+            if (imageFile) {
+                data.imageId = imageFile.imageId;
+                data.imageUrl = imageFile.imageUrl;
+            }
             //console.log(data);
             http.put(`/projects/${id}`, data)
                 .then((res) => {
@@ -112,7 +119,7 @@ function EditProject() {
             const res = await http.post("/files/upload", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            setImage(res.data);
+            setImageFile(res.data);
         } catch (error) {
             console.error("Upload failed:", error.response.data);
         } finally {
@@ -197,10 +204,10 @@ function EditProject() {
                                                 <CircularProgress />
                                             </Box>
                                         ) : (
-                                            project.imageUrl && (
+                                            imageFile && imageFile.imageUrl && (
                                                 <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                                                     <img alt="project"
-                                                        src={project.imageUrl}>
+                                                        src={imageFile.imageUrl}>
                                                     </img>
                                                 </Box>
                                             )

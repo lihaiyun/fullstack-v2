@@ -17,7 +17,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 function MyForm() {
-    const [formData, setFormData] = useState({
+    const formData = {
         title: 'My title',
         description: 'My description',
         price: 0,
@@ -26,15 +26,9 @@ function MyForm() {
         time: dayjs().minute(0),
         datetime: dayjs().add(1, 'day').minute(0),
         tnc: true
-    });
+    };
+    const [imageFile, setImageFile] = useState(null);
     const [uploadingImage, setUploadingImage] = useState(false);
-
-    const setImage = (data) => {
-        setFormData({ ...formData, 
-            imageId: data.imageId,
-            imageUrl: data.imageUrl
-         });
-    }
 
     const mySchema = yup.object().shape({
         title: yup.string().trim()
@@ -55,7 +49,6 @@ function MyForm() {
 
     const formik = useFormik({
         initialValues: formData,
-        enableReinitialize: true,
         validationSchema: mySchema,
         onSubmit: (data) => {
             // create a new object for submission
@@ -66,6 +59,11 @@ function MyForm() {
             dataToSubmit.date = data.date.format('YYYY-MM-DD');
             dataToSubmit.time = data.time.format('HH:mm');
             dataToSubmit.datetime = data.datetime.format();
+            // If image is uploaded, add imageId and imageUrl to data
+            if (imageFile) {
+                dataToSubmit.imageId = imageFile.imageId;
+                dataToSubmit.imageUrl = imageFile.imageUrl;
+            }
             console.log(dataToSubmit);
             toast.success('Form submitted successfully');
         }
@@ -87,7 +85,7 @@ function MyForm() {
             const res = await http.post("/files/upload", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            setImage(res.data);
+            setImageFile(res.data);
         } catch (error) {
             console.error("Upload failed:", error.response.data);
         } finally {
@@ -234,10 +232,10 @@ function MyForm() {
                                         <CircularProgress />
                                     </Box>
                                 ) : (
-                                    formData.imageUrl && (
+                                    imageFile && imageFile.imageUrl && (
                                         <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                                             <img alt="project"
-                                                src={formData.imageUrl}>
+                                                src={imageFile.imageUrl}>
                                             </img>
                                         </Box>
                                     )

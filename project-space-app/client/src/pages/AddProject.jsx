@@ -33,30 +33,31 @@ const projectSchema = yup.object().shape({
 function AddProject() {
     const navigate = useNavigate();
 
-    const [project, setProject] = useState({
+    // Initial project data
+    const project = {
         name: '',
         description: '',
         dueDate: dayjs().add(1, 'month'),
-        status: '',
-    });
+        status: 'not-started'
+    };
+    // State to hold image file data
+    const [imageFile, setImageFile] = useState(null);
+    // State to manage uploading state
     const [uploadingImage, setUploadingImage] = useState(false);
-
-    const setImage = (data) => {
-        setProject({ ...project, 
-            imageId: data.imageId,
-            imageUrl: data.imageUrl
-         });
-    }
 
     const formik = useFormik({
         initialValues: project,
-        enableReinitialize: true,
         validationSchema: projectSchema,
         onSubmit: (data) => {
             data.name = data.name.trim();
             data.description = data.description.trim();
             // Convert dueDate to string
             data.dueDate = data.dueDate.format('YYYY-MM-DD');
+            // If image is uploaded, add imageId and imageUrl to data
+            if (imageFile) {
+                data.imageId = imageFile.imageId;
+                data.imageUrl = imageFile.imageUrl;
+            }
             //console.log(data);
             http.post("/projects", data)
                 .then((res) => {
@@ -82,7 +83,7 @@ function AddProject() {
             const res = await http.post("/files/upload", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            setImage(res.data);
+            setImageFile(res.data);
         } catch (error) {
             console.error("Upload failed:", error.response.data);
         } finally {
@@ -165,10 +166,10 @@ function AddProject() {
                                         <CircularProgress />
                                     </Box>
                                 ) : (
-                                    project.imageUrl && (
+                                    imageFile && imageFile.imageUrl && (
                                         <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                                             <img alt="project"
-                                                src={project.imageUrl}>
+                                                src={imageFile.imageUrl}>
                                             </img>
                                         </Box>
                                     )
