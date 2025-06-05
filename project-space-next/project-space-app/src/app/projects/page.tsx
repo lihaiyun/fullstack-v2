@@ -1,5 +1,6 @@
 import Image from "next/image";
 import http from "@utils/http";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function Projects() {
   // Fetch data on the server
@@ -7,29 +8,31 @@ export default async function Projects() {
   try {
     const response = await http.get("/projects");
     projects = response.data;
-    //console.log("Fetched projects:", projects);
   } catch (error) {
-    // Handle error as needed
     console.error("Error fetching projects:", error);
   }
 
   return (
-    <div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {projects.map((project: any) => (
-        <div key={project._id} className="p-4 border rounded-lg shadow-md">
-          <h2 className="text-xl font-bold">{project.name}</h2>
-          <p className="text-gray-700">{project.description}</p>
-          <Image
-            src={project.imageUrl}
-            alt={project.name}
-            width={300}
-            height={200}
-            className="mt-2 rounded"
-            priority
-            style={{ width: "auto", height: "auto" }}
-          />
-        </div>
+        <Card key={project._id} className="flex flex-col">
+          <CardHeader>
+            <CardTitle className="text-xl">{project.name}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 mb-2">{project.description}</p>
+            <div className="relative w-full aspect-[16/9]">
+              <Image
+                src={project.imageUrl}
+                alt={project.name}
+                fill
+                className="rounded object-cover"
+                priority
+              />
+            </div>
+          </CardContent>
+        </Card>
       ))}
     </div>
-  )
+  );
 }
