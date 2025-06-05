@@ -2,7 +2,7 @@ import express from "express";
 
 import { validateToken } from "../middlewares/auth.js";
 import { upload } from "../middlewares/upload.js";
-import { cloudinary } from "../cloudinary.js";
+import { cloudinary } from "../utils/cloudinary.js";
 
 const router = express.Router();
 

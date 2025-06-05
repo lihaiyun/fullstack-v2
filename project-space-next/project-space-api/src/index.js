@@ -9,7 +9,7 @@ import usersRouter from './routes/users.js';
 import filesRouter from './routes/files.js';
 
 // Import database connection
-import { connectToDatabase } from './db.js';
+import { connectToDatabase } from './utils/db.js';
 
 // Configure dotenv to load environment variables
 dotenv.config();
@@ -29,9 +29,9 @@ app.get('/', (req, res) => {
 });
 
 // Use the routers
-app.use('/api/projects', projectsRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/files', filesRouter);
+app.use('/projects', projectsRouter);
+app.use('/users', usersRouter);
+app.use('/files', filesRouter);
 
 // Use async function to connect to the database
 const startServer = async () => {
@@ -40,7 +40,7 @@ const startServer = async () => {
     await connectToDatabase();
     
     // Start the Express server after successful connection
-    const port = process.env.APP_PORT || 3001;
+    const port = process.env.APP_PORT;
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
