@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    image: project-space-api
+    container_name: project-space-container
+    ports:
+      - "5000:80"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: always
