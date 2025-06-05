@@ -7,7 +7,7 @@ export default async function Projects() {
   try {
     const response = await http.get("/projects");
     projects = response.data;
-    console.log("Fetched projects:", projects);
+    //console.log("Fetched projects:", projects);
   } catch (error) {
     // Handle error as needed
     console.error("Error fetching projects:", error);
