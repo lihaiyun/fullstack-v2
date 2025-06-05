@@ -1,38 +1,49 @@
 "use client";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import http from "@utils/http";
+import http from "@/utils/http";
+import { useContext } from "react";
+import UserContext from "@/contexts/UserContext";
+import { useRouter } from "next/navigation";
 
 const loginSchema = Yup.object().shape({
-    email: Yup.string().trim()
-        .required('Email is required')
-        .email('Email must be a valid email address'),
-    password: Yup.string().trim()
-        .required('Password is required')
-        .min(8, 'Password must be at least 8 characters')
+  email: Yup.string()
+    .trim()
+    .required("Email is required")
+    .email("Email must be a valid email address"),
+  password: Yup.string()
+    .trim()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters"),
 });
 
 export default function Login() {
-    const formik = useFormik({
-        initialValues: {
-            email: "",
-            password: ""
-        },
-        validationSchema: loginSchema,
-        onSubmit: (data) => {
-            data.email = data.email.trim().toLowerCase();
-            data.password = data.password.trim();
-            http.post("/users/login", data)
-                .then((res) => {
-                    // Handle successful login
-                    console.log("Login successful:", res.data);
-                })
-                .catch(function (err) {
-                    // Handle error, e.g., show a notification or alert
-                    console.error("Login failed:", err.response?.data || err.message);
-                });
-        }
-    });
+  const { setUser } = useContext(UserContext);
+  const router = useRouter();
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: loginSchema,
+    onSubmit: (data) => {
+      data.email = data.email.trim().toLowerCase();
+      data.password = data.password.trim();
+      http
+        .post("/users/login", data)
+        .then((res) => {
+          // Handle successful login
+          console.log("Login successful:", res.data);
+          setUser(res.data.user);
+          //router.push("/"); // Redirect to home page after login
+        })
+        .catch(function (err) {
+          // Handle error, e.g., show a notification or alert
+          console.error("Login failed:", err.response?.data || err.message);
+        });
+    },
+  });
 
   return (
     <div className="flex flex-col items-center justify-center p-4">

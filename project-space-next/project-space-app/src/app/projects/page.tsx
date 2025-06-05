@@ -1,5 +1,5 @@
 import Image from "next/image";
-import http from "@utils/http";
+import http from "@/utils/http";
 import dayjs from "dayjs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
