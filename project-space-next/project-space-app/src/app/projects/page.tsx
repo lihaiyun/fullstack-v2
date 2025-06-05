@@ -2,7 +2,9 @@ import Image from "next/image";
 import http from "@utils/http";
 import dayjs from "dayjs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, CheckCircle, XCircle, Clock, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { User, CheckCircle, XCircle, Clock, Calendar, Plus } from "lucide-react";
+import Link from "next/link";
 
 function formatDate(dateString: string) {
   return dayjs(dateString).format("D MMM YYYY");
@@ -47,39 +49,50 @@ export default async function Projects() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {projects.map((project: any) => (
-        <Card key={project._id} className="p-2">
-          <CardHeader className="p-2">
-            <CardTitle className="text-xl">{project.name}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="flex items-center gap-1 text-sm text-gray-600">
-                <User className="w-4 h-4" />
-                {project.owner.name}
-              </span>
-              <span className="flex items-center gap-1 text-sm">
-                {renderStatus(project.status)}
-              </span>
-              <span className="flex items-center gap-1 text-sm text-gray-500">
-                <Calendar className="w-4 h-4" />
-                {formatDate(project.dueDate)}
-              </span>
-            </div>
-            <p className="text-gray-700 mb-2">{project.description}</p>
-            <div className="relative w-full aspect-[16/9]">
-              <Image
-                src={project.imageUrl}
-                alt={project.name}
-                fill
-                className="rounded object-cover"
-                priority
-              />
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Projects</h1>
+        <Button asChild>
+          <Link href="/projects/add">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Project
+          </Link>
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {projects.map((project: any) => (
+          <Card key={project._id} className="p-2">
+            <CardHeader className="p-2 pb-0">
+              <CardTitle className="text-xl">{project.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 pt-0">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="flex items-center gap-1 text-sm text-gray-600">
+                  <User className="w-4 h-4" />
+                  {project.owner.name}
+                </span>
+                <span className="flex items-center gap-1 text-sm">
+                  {renderStatus(project.status)}
+                </span>
+                <span className="flex items-center gap-1 text-sm text-gray-500">
+                  <Calendar className="w-4 h-4" />
+                  {formatDate(project.dueDate)}
+                </span>
+              </div>
+              <p className="text-gray-700 mb-2">{project.description}</p>
+              <div className="relative w-full aspect-[16/9]">
+                <Image
+                  src={project.imageUrl}
+                  alt={project.name}
+                  fill
+                  className="rounded object-cover"
+                  priority
+                />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </>
   );
 }
