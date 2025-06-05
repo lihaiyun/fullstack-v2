@@ -1,5 +1,6 @@
 // Import packages
 import express from 'express';
+import cookieParser from "cookie-parser";
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -16,12 +17,13 @@ dotenv.config();
 
 // Create an Express application
 const app = express();
-
-// Middleware
-app.use(cors(
-    { origin: process.env.CLIENT_URL }
-));
 app.use(express.json());
+app.use(cookieParser());
+
+// Set up CORS to allow requests from the frontend URL
+app.use(cors(
+    { origin: process.env.FRONTEND_URL }
+));
 
 // Define routes
 app.get('/', (req, res) => {
@@ -40,7 +42,7 @@ const startServer = async () => {
     await connectToDatabase();
     
     // Start the Express server after successful connection
-    const port = process.env.APP_PORT;
+    const port = process.env.BACKEND_PORT;
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });

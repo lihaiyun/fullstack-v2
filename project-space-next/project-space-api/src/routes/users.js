@@ -99,10 +99,13 @@ router.post("/login", async (req, res) => {
     };
     const accessToken = jwt.sign(userInfo, process.env.APP_SECRET, 
         { expiresIn: process.env.TOKEN_EXPIRES_IN });
-    res.json({
-        accessToken,
-        user: userInfo
+    // return access token in cookie, allowing cross-site cookies
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "None" // Allow cross-site cookies
     });
+    res.json({ user: userInfo });
 });
 
 router.get("/auth", validateToken, async (req, res) => {

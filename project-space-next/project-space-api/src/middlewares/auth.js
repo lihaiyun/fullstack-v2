@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 
 const validateToken = async (req, res, next) => {
     try {
-        // Get the token from the request header
-        const accessToken = req.header("Authorization").replace("Bearer ", "");
+        // Get the token from the request cookies
+        const accessToken = req.cookies.accessToken;
         if (!accessToken) {
             return res.status(401).json({ message: "Please authenticate" });
         }
