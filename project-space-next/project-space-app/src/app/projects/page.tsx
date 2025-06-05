@@ -71,12 +71,14 @@ export default async function Projects() {
                   <User className="w-4 h-4" />
                   {project.owner.name}
                 </span>
-                <span className="flex items-center gap-1 text-sm">
-                  {renderStatus(project.status)}
-                </span>
+              </div>
+              <div className="flex items-center gap-3 mb-2">
                 <span className="flex items-center gap-1 text-sm text-gray-500">
                   <Calendar className="w-4 h-4" />
                   {formatDate(project.dueDate)}
+                </span>
+                <span className="flex items-center gap-1 text-sm">
+                  {renderStatus(project.status)}
                 </span>
               </div>
               <p className="text-gray-700 mb-2">{project.description}</p>
