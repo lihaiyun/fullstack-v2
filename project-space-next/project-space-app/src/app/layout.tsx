@@ -1,10 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
 import { UserProvider } from "@/contexts/UserContext";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MainMenu from "@/components/MainMenu";
-import http from "@/utils/http";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,14 +19,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    http.get("/users/auth")
-      .then(res => setUser(res.data.user))
-      .catch(() => setUser(null));
-  }, []);
-
   return (
     <html lang="en">
       <body

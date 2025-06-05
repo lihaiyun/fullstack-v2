@@ -100,10 +100,11 @@ router.post("/login", async (req, res) => {
     const accessToken = jwt.sign(userInfo, process.env.APP_SECRET, 
         { expiresIn: process.env.TOKEN_EXPIRES_IN });
     // return access token in cookie, allowing cross-site cookies
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
     });
     res.json({ user: userInfo });
 });

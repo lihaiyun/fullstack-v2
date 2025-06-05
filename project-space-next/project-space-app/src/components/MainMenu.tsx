@@ -6,6 +6,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import Link from "next/link";
 
 export default function MainMenu() {
   const { user } = useContext(UserContext);
@@ -16,13 +17,17 @@ export default function MainMenu() {
         <NavigationMenuList>
           <div className="flex gap-2">
             <NavigationMenuItem>
-              <NavigationMenuLink className="text-lg" href="/">
-                Home
+              <NavigationMenuLink className="text-lg" asChild>
+                <Link href="/">
+                  Home
+                </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink className="text-lg" href="/projects">
-                Projects
+              <NavigationMenuLink className="text-lg" asChild>
+                <Link href="/projects">
+                  Projects
+                </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
           </div>
@@ -36,13 +41,17 @@ export default function MainMenu() {
             ) : (
               <>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="text-lg" href="/user/login">
-                    Login
+                  <NavigationMenuLink className="text-lg" asChild>
+                    <Link href="/user/login">
+                      Login
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="text-lg" href="/user/register">
-                    Register
+                  <NavigationMenuLink className="text-lg" asChild>
+                    <Link href="/user/register">
+                      Register
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </>
