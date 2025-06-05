@@ -51,7 +51,7 @@ export default async function Projects() {
   return (
     <>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Projects</h1>
+        <h1 className="text-2xl font-bold mx-2">Projects</h1>
         <Button asChild>
           <Link href="/projects/add">
             <Plus className="w-4 h-4 mr-2" />

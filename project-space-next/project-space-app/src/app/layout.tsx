@@ -6,7 +6,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,19 +33,40 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <nav className="container mx-auto px-4 my-4">
+        <div className="container mx-auto flex px-4 my-4">
           <NavigationMenu>
             <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink className="text-lg" href="/">Home</NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink className="text-lg" href="/projects">Projects</NavigationMenuLink>
-              </NavigationMenuItem>
-              {/* Add more links as needed */}
+              <div className="flex gap-2">
+                <NavigationMenuItem>
+                  <NavigationMenuLink className="text-lg" href="/">
+                    Home
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink className="text-lg" href="/projects">
+                    Projects
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </div>
             </NavigationMenuList>
           </NavigationMenu>
-        </nav>
+          <NavigationMenu className="ml-auto">
+            <NavigationMenuList>
+              <div className="flex gap-2">
+                <NavigationMenuItem>
+                  <NavigationMenuLink className="text-lg" href="/login">
+                    Login
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink className="text-lg" href="/register">
+                    Register
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </div>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
         <div className="container mx-auto px-4">
           <main>{children}</main>
         </div>
