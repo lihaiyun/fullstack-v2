@@ -85,6 +85,7 @@ export default async function Projects() {
                   src={project.imageUrl}
                   alt={project.name}
                   fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                   className="rounded object-cover"
                   priority
                 />
