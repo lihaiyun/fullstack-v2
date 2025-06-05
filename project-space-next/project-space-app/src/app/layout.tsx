@@ -54,12 +54,12 @@ export default function RootLayout({
             <NavigationMenuList>
               <div className="flex gap-2">
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="text-lg" href="/login">
+                  <NavigationMenuLink className="text-lg" href="/user/login">
                     Login
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="text-lg" href="/register">
+                  <NavigationMenuLink className="text-lg" href="/user/register">
                     Register
                   </NavigationMenuLink>
                 </NavigationMenuItem>
