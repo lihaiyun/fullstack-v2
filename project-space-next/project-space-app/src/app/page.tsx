@@ -1,18 +1,6 @@
 import Image from "next/image";
-import http from '@utils/http';
 
-export default async function Home() {
-  // Fetch data on the server
-  let projects = [];
-  try {
-    const response = await http.get('/projects');
-    projects = response.data;
-    console.log("Fetched projects:", projects);
-  } catch (error) {
-    // Handle error as needed
-    console.error("Error fetching projects:", error);
-  }
-
+export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
