@@ -85,10 +85,7 @@ export default function EditProject() {
         const res = await http.get(`/projects/${params.id}`);
         const { name, description, dueDate, status } = res.data;
         // Use date-fns to convert to YYYY-MM-DD for input type="date"
-        let localDueDate = "";
-        if (dueDate) {
-          localDueDate = format(parseISO(dueDate), "yyyy-MM-dd");
-        }
+        let localDueDate = format(parseISO(dueDate), "yyyy-MM-dd");
         formik.setValues({
           name: name || "",
           description: description || "",
