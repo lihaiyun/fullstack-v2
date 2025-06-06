@@ -4,19 +4,22 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import http from "@/utils/http";
 import { useRouter, useParams } from "next/navigation";
+import Image from "next/image";
 
 const projectSchema = Yup.object().shape({
-  name: Yup.string().trim()
-    .required('Name is required')
-    .min(3, 'Name must be at least 3 characters')
-    .max(100, 'Name must be at most 100 characters'),
-  description: Yup.string()
-    .max(500, 'Description must be at most 500 characters'),
-  dueDate: Yup.date()
-    .required('Due date is required'),
+  name: Yup.string()
+    .trim()
+    .required("Name is required")
+    .min(3, "Name must be at least 3 characters")
+    .max(100, "Name must be at most 100 characters"),
+  description: Yup.string().max(
+    500,
+    "Description must be at most 500 characters"
+  ),
+  dueDate: Yup.date().required("Due date is required"),
   status: Yup.string()
-    .required('Status is required')
-    .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
+    .required("Status is required")
+    .oneOf(["not-started", "in-progress", "completed"], "Invalid status"),
 });
 
 export default function EditProject() {
@@ -31,6 +34,8 @@ export default function EditProject() {
       description: "",
       dueDate: "",
       status: "not-started",
+      imageId: "",
+      imageUrl: "",
     },
     validationSchema: projectSchema,
     enableReinitialize: true,
@@ -57,6 +62,8 @@ export default function EditProject() {
           description: description || "",
           dueDate: dueDate ? dueDate.slice(0, 10) : "",
           status: status || "not-started",
+          imageId: res.data.imageId || "",
+          imageUrl: res.data.imageUrl || "",
         });
       } catch (err: any) {
         setError("Failed to load project");
@@ -68,6 +75,25 @@ export default function EditProject() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
+  // Handle image upload
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await http.post("/files/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      // Assuming response contains { imageUrl, imageId }
+      formik.setFieldValue("imageUrl", res.data.imageUrl);
+      formik.setFieldValue("imageId", res.data.imageId);
+    } catch (err) {
+      setError("Image upload failed");
+    }
+  };
+
   if (loading) {
     return <div className="p-4 text-center">Loading...</div>;
   }
@@ -75,86 +101,148 @@ export default function EditProject() {
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <h1 className="text-2xl font-bold mb-4">Edit Project</h1>
-      <form className="w-full max-w-md" onSubmit={formik.handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2" htmlFor="name">Project Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              formik.touched.name && formik.errors.name ? "border-red-500" : "border-gray-300"
-            }`}
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.name && formik.errors.name && (
-            <div className="text-red-500 text-xs mt-1">{formik.errors.name}</div>
-          )}
+      <form className="w-full max-w-2xl" onSubmit={formik.handleSubmit}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left: Form fields */}
+          <div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2" htmlFor="name">
+                Project Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  formik.touched.name && formik.errors.name
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.name && formik.errors.name && (
+                <div className="text-red-500 text-xs mt-1">
+                  {formik.errors.name}
+                </div>
+              )}
+            </div>
+            <div className="mb-4">
+              <label
+                className="block text-sm font-medium mb-2"
+                htmlFor="description"
+              >
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows={4}
+                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  formik.touched.description && formik.errors.description
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              ></textarea>
+              {formik.touched.description && formik.errors.description && (
+                <div className="text-red-500 text-xs mt-1">
+                  {formik.errors.description}
+                </div>
+              )}
+            </div>
+            <div className="mb-4">
+              <label
+                className="block text-sm font-medium mb-2"
+                htmlFor="dueDate"
+              >
+                Due Date
+              </label>
+              <input
+                type="date"
+                id="dueDate"
+                name="dueDate"
+                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  formik.touched.dueDate && formik.errors.dueDate
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
+                value={formik.values.dueDate}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.dueDate && formik.errors.dueDate && (
+                <div className="text-red-500 text-xs mt-1">
+                  {formik.errors.dueDate}
+                </div>
+              )}
+            </div>
+            <div className="mb-4">
+              <label
+                className="block text-sm font-medium mb-2"
+                htmlFor="status"
+              >
+                Status
+              </label>
+              <select
+                id="status"
+                name="status"
+                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  formik.touched.status && formik.errors.status
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
+                value={formik.values.status}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              >
+                <option value="not-started">Not Started</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+              {formik.touched.status && formik.errors.status && (
+                <div className="text-red-500 text-xs mt-1">
+                  {formik.errors.status}
+                </div>
+              )}
+            </div>
+            {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+              disabled={formik.isSubmitting}
+            >
+              {formik.isSubmitting ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+          {/* Right: Image upload and preview */}
+          <div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2" htmlFor="image">
+                Project Image
+              </label>
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {formik.values.imageUrl && (
+                <div className="relative w-full aspect-[16/9] mt-2">
+                  <Image
+                    src={formik.values.imageUrl}
+                    alt="Project Image"
+                    fill
+                    className="rounded object-cover"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2" htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            name="description"
-            rows={4}
-            className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              formik.touched.description && formik.errors.description ? "border-red-500" : "border-gray-300"
-            }`}
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          ></textarea>
-          {formik.touched.description && formik.errors.description && (
-            <div className="text-red-500 text-xs mt-1">{formik.errors.description}</div>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2" htmlFor="dueDate">Due Date</label>
-          <input
-            type="date"
-            id="dueDate"
-            name="dueDate"
-            className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              formik.touched.dueDate && formik.errors.dueDate ? "border-red-500" : "border-gray-300"
-            }`}
-            value={formik.values.dueDate}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.dueDate && formik.errors.dueDate && (
-            <div className="text-red-500 text-xs mt-1">{formik.errors.dueDate}</div>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2" htmlFor="status">Status</label>
-          <select
-            id="status"
-            name="status"
-            className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              formik.touched.status && formik.errors.status ? "border-red-500" : "border-gray-300"
-            }`}
-            value={formik.values.status}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          >
-            <option value="not-started">Not Started</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-          {formik.touched.status && formik.errors.status && (
-            <div className="text-red-500 text-xs mt-1">{formik.errors.status}</div>
-          )}
-        </div>
-        {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
-          disabled={formik.isSubmitting}
-        >
-          {formik.isSubmitting ? "Saving..." : "Save Changes"}
-        </button>
       </form>
     </div>
   );

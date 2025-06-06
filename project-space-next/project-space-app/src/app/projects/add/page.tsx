@@ -16,9 +16,7 @@ const projectSchema = Yup.object().shape({
         .required('Due date is required'),
     status: Yup.string()
         .required('Status is required')
-        .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
-    imageId: Yup.string().max(100),
-    imageUrl: Yup.string().max(200)
+        .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status')
 });
 
 export default function AddProject() {
