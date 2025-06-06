@@ -4,12 +4,12 @@ import * as Yup from "yup";
 import http from "@/utils/http";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { format, parse } from "date-fns";
 
 // shadcn/ui components
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, ChevronsUpDown } from "lucide-react";
@@ -33,6 +33,11 @@ const statusOptions = [
   { value: "in-progress", label: "In Progress" },
   { value: "completed", label: "Completed" },
 ];
+
+// Helper to parse YYYY-MM-DD as local date
+function parseLocalDate(dateString: string) {
+  return parse(dateString, "yyyy-MM-dd", new Date());
+}
 
 export default function AddProject() {
   const router = useRouter();
@@ -114,16 +119,16 @@ export default function AddProject() {
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {formik.values.dueDate
-                  ? format(new Date(formik.values.dueDate), "PPP")
+                  ? format(parseLocalDate(formik.values.dueDate), "PPP")
                   : "Pick a date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={formik.values.dueDate ? new Date(formik.values.dueDate) : undefined}
+                selected={formik.values.dueDate ? parseLocalDate(formik.values.dueDate) : undefined}
                 onSelect={(date) => {
-                  formik.setFieldValue("dueDate", date ? date.toISOString().slice(0, 10) : "");
+                  formik.setFieldValue("dueDate", date ? format(date, "yyyy-MM-dd") : "");
                   setDatePickerOpen(false);
                 }}
                 initialFocus
