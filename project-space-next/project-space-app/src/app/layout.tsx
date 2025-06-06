@@ -26,7 +26,7 @@ export default function RootLayout({
       >
         <UserProvider>
           <MainMenu />
-          <main className="container mx-auto px-4">{children}</main>
+          <main className="container mx-auto py-4">{children}</main>
         </UserProvider>
       </body>
     </html>
