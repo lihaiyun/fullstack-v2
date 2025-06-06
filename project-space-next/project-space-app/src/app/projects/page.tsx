@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import http from "@/utils/http";
-import dayjs from "dayjs";
+import { format, parseISO } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, CheckCircle, XCircle, Clock, Calendar, Plus, Pencil } from "lucide-react";
@@ -9,8 +9,9 @@ import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "@/contexts/UserContext";
 
+// Use date-fns for formatting
 function formatDate(dateString: string) {
-  return dayjs(dateString).format("D MMM YYYY");
+  return format(parseISO(dateString), "d MMM yyyy");
 }
 
 export default function Projects() {
