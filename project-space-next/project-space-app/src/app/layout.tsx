@@ -14,11 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "Project Space",
-  description: "A modern project management app",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
