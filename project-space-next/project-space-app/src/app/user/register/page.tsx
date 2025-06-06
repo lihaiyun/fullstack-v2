@@ -3,6 +3,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import http from "@/utils/http";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const registerSchema = Yup.object().shape({
     name: Yup.string().trim()
@@ -40,14 +42,14 @@ export default function Register() {
             data.password = data.password.trim();
             http.post("/users/register", data)
             .then((res) => {
-                // Handle successful registration, e.g., redirect to login page
+                // Handle successful registration
                 console.log("Registration successful:", res.data);
-                // Optionally redirect or show a success message
-                router.push("/user/login"); // Redirect to login page after registration
+                toast.success("Registration successful!");
+                router.push("/user/login");
             })
             .catch((err) => {
                 // Handle error, e.g., show a notification or alert
-                console.error("Registration failed:", err.response?.data || err.message);
+                toast.error(err.response?.data?.message || "Registration failed. Please try again.");
             });
         },
     });
@@ -66,7 +68,6 @@ export default function Register() {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.name}
-                        required
                     />
                     {formik.touched.name && formik.errors.name && (
                         <div className="text-red-500 text-xs mt-1">{formik.errors.name}</div>
@@ -82,7 +83,6 @@ export default function Register() {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.email}
-                        required
                     />
                     {formik.touched.email && formik.errors.email && (
                         <div className="text-red-500 text-xs mt-1">{formik.errors.email}</div>
@@ -98,7 +98,6 @@ export default function Register() {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.password}
-                        required
                     />
                     {formik.touched.password && formik.errors.password && (
                         <div className="text-red-500 text-xs mt-1">{formik.errors.password}</div>
@@ -114,7 +113,6 @@ export default function Register() {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.confirmPassword}
-                        required
                     />
                     {formik.touched.confirmPassword && formik.errors.confirmPassword && (
                         <div className="text-red-500 text-xs mt-1">{formik.errors.confirmPassword}</div>
@@ -127,6 +125,7 @@ export default function Register() {
                     Register
                 </button>
             </form>
+            <ToastContainer />
         </div>
     );
 }

@@ -5,6 +5,8 @@ import http from "@/utils/http";
 import { useContext } from "react";
 import UserContext from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -34,13 +36,15 @@ export default function Login() {
         .post("/users/login", data)
         .then((res) => {
           // Handle successful login
-          console.log("Login successful:", res.data);
           setUser(res.data.user);
+          toast.success("Login successful!");
           router.push("/"); // Redirect to home page after login
         })
         .catch(function (err) {
           // Handle error, e.g., show a notification or alert
-          console.error("Login failed:", err.response?.data || err.message);
+          toast.error(
+            err.response?.data?.message || "Login failed. Please try again."
+          );
         });
     },
   });
@@ -61,7 +65,6 @@ export default function Login() {
                 ? "border-red-500"
                 : "border-gray-300"
             }`}
-            required
           />
           {formik.touched.email && formik.errors.email && (
             <div className="text-red-500 text-xs mt-1">
@@ -82,7 +85,6 @@ export default function Login() {
                 ? "border-red-500"
                 : "border-gray-300"
             }`}
-            required
           />
           {formik.touched.password && formik.errors.password && (
             <div className="text-red-500 text-xs mt-1">
@@ -97,6 +99,7 @@ export default function Login() {
           Login
         </button>
       </form>
+      <ToastContainer />
     </div>
   );
 }
