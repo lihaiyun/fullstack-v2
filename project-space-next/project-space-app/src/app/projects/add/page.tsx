@@ -6,10 +6,19 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const projectSchema = Yup.object().shape({
-  name: Yup.string().required("Project name is required"),
-  description: Yup.string().required("Description is required"),
-  dueDate: Yup.date().required("Due date is required"),
-  status: Yup.string().oneOf(["not-started", "in-progress", "completed"]).required("Status is required"),
+    name: Yup.string().trim()
+        .required('Name is required')  
+        .min(3, 'Name must be at least 3 characters')
+        .max(100, 'Name must be at most 100 characters'),
+    description: Yup.string()
+        .max(500, 'Description must be at most 500 characters'),
+    dueDate: Yup.date()
+        .required('Due date is required'),
+    status: Yup.string()
+        .required('Status is required')
+        .oneOf(['not-started', 'in-progress', 'completed'], 'Invalid status'),
+    imageId: Yup.string().max(100),
+    imageUrl: Yup.string().max(200)
 });
 
 export default function AddProject() {
