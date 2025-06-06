@@ -27,6 +27,7 @@ export default function EditProject() {
   const params = useParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -82,15 +83,25 @@ export default function EditProject() {
     const formData = new FormData();
     formData.append("file", file);
 
+    setUploadProgress(0);
     try {
       const res = await http.post("/files/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percent);
+          }
+        },
       });
-      // Assuming response contains { imageUrl, imageId }
       formik.setFieldValue("imageUrl", res.data.imageUrl);
       formik.setFieldValue("imageId", res.data.imageId);
+      setUploadProgress(null);
     } catch (err) {
       setError("Image upload failed");
+      setUploadProgress(null);
     }
   };
 
@@ -100,7 +111,7 @@ export default function EditProject() {
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="text-2xl font-bold mb-4">Edit Project</h1>
+      <h1 className="text-2xl font-bold mb-8">Edit Project</h1>
       <form className="w-full max-w-2xl" onSubmit={formik.handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Form fields */}
@@ -224,12 +235,30 @@ export default function EditProject() {
               <label className="block text-sm font-medium mb-2" htmlFor="image">
                 Project Image
               </label>
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
+              <label
+                htmlFor="image"
+                className="inline-block bg-gray-600 text-white px-3 py-1 rounded cursor-pointer hover:bg-gray-700 transition-colors"
+              >
+                Choose File
+                <input
+                  type="file"
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+              {uploadProgress !== null && (
+                <div className="w-full bg-gray-200 rounded h-3 mt-2">
+                  <div
+                    className="bg-blue-500 h-3 rounded transition-all"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                  <div className="text-xs text-center mt-1">
+                    {uploadProgress}%
+                  </div>
+                </div>
+              )}
               {formik.values.imageUrl && (
                 <div className="relative w-full aspect-[16/9] mt-2">
                   <Image
