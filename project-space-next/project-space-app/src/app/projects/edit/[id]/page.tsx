@@ -245,7 +245,7 @@ export default function EditProject() {
               </label>
               <label
                 htmlFor="image"
-                className="inline-block bg-blue-600 text-white px-3 py-1 rounded cursor-pointer hover:bg-gray-700 transition-colors"
+                className="inline-block bg-black text-white px-3 py-1 rounded cursor-pointer hover:bg-gray-800 transition-colors"
               >
                 Choose File
                 <input
