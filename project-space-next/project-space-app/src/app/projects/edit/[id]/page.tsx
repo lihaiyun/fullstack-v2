@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import http from "@/utils/http";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
+import { Spinner } from "@/components/ui/spinner";
 
 const projectSchema = Yup.object().shape({
   name: Yup.string()
@@ -27,7 +28,7 @@ export default function EditProject() {
   const params = useParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<boolean>(false);
 
   const formik = useFormik({
     initialValues: {
@@ -83,25 +84,17 @@ export default function EditProject() {
     const formData = new FormData();
     formData.append("file", file);
 
-    setUploadProgress(0);
+    setUploadProgress(true);
     try {
       const res = await http.post("/files/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const percent = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percent);
-          }
-        },
       });
       formik.setFieldValue("imageUrl", res.data.imageUrl);
       formik.setFieldValue("imageId", res.data.imageId);
-      setUploadProgress(null);
+      setUploadProgress(false);
     } catch (err) {
       setError("Image upload failed");
-      setUploadProgress(null);
+      setUploadProgress(false);
     }
   };
 
@@ -248,15 +241,9 @@ export default function EditProject() {
                   className="hidden"
                 />
               </label>
-              {uploadProgress !== null && (
-                <div className="w-full bg-gray-200 rounded h-3 mt-2">
-                  <div
-                    className="bg-blue-500 h-3 rounded transition-all"
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                  <div className="text-xs text-center mt-1">
-                    {uploadProgress}%
-                  </div>
+              {uploadProgress && (
+                <div className="flex items-center justify-center mt-2">
+                  <Spinner className="text-blue-500" />
                 </div>
               )}
               {formik.values.imageUrl && (
