@@ -17,8 +17,8 @@ instance.interceptors.response.use(
             if (error.response.status === 401) {
                 // Handle unauthorized access, e.g., redirect to login
                 console.error("Unauthorized access - redirecting to login");
-                // You can add your redirection logic here
-                
+                // Redirect to login page
+                window.location.href = "/user/login";
             } else if (error.response.status === 403) {
                 // Handle forbidden access
                 console.error("Forbidden access - you do not have permission");
