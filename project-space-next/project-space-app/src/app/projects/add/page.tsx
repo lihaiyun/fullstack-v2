@@ -119,7 +119,7 @@ export default function AddProject() {
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {formik.values.dueDate
-                  ? format(parseLocalDate(formik.values.dueDate), "PPP")
+                  ? format(parseLocalDate(formik.values.dueDate), "d MMM yyyy")
                   : "Pick a date"}
               </Button>
             </PopoverTrigger>

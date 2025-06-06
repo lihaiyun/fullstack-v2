@@ -6,8 +6,23 @@ import http from "@/utils/http";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { parseISO, format } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { format, parse, parseISO } from "date-fns";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const projectSchema = Yup.object().shape({
   name: Yup.string()
@@ -25,6 +40,11 @@ const projectSchema = Yup.object().shape({
     .oneOf(["not-started", "in-progress", "completed"], "Invalid status"),
 });
 
+// Helper to parse YYYY-MM-DD as local date
+function parseLocalDate(dateString: string) {
+  return parse(dateString, "yyyy-MM-dd", new Date());
+}
+
 export default function EditProject() {
   const router = useRouter();
   const params = useParams();
@@ -33,6 +53,7 @@ export default function EditProject() {
   const [uploadProgress, setUploadProgress] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -193,19 +214,41 @@ export default function EditProject() {
               >
                 Due Date
               </label>
-              <input
-                type="date"
-                id="dueDate"
-                name="dueDate"
-                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  formik.touched.dueDate && formik.errors.dueDate
-                    ? "border-red-500"
-                    : "border-gray-300"
-                }`}
-                value={formik.values.dueDate}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
+              <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formik.values.dueDate && "text-muted-foreground"
+                    )}
+                    type="button"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formik.values.dueDate
+                      ? format(parseLocalDate(formik.values.dueDate), "d MMM yyyy")
+                      : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={
+                      formik.values.dueDate
+                        ? parseLocalDate(formik.values.dueDate)
+                        : undefined
+                    }
+                    onSelect={(date) => {
+                      formik.setFieldValue(
+                        "dueDate",
+                        date ? format(date, "yyyy-MM-dd") : ""
+                      );
+                      setDatePickerOpen(false);
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
               {formik.touched.dueDate && formik.errors.dueDate && (
                 <div className="text-red-500 text-xs mt-1">
                   {formik.errors.dueDate}
@@ -308,7 +351,8 @@ export default function EditProject() {
                 <DialogTitle>Confirm Delete</DialogTitle>
               </DialogHeader>
               <div className="mb-6">
-                Are you sure you want to delete this project? This action cannot be undone.
+                Are you sure you want to delete this project? This action cannot be
+                undone.
               </div>
               <DialogFooter>
                 <button
