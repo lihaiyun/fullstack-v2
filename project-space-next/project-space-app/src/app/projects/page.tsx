@@ -23,21 +23,21 @@ export default async function Projects() {
   // Helper to render status with icon and color
   function renderStatus(status: string) {
     switch (status) {
-      case "Completed":
+      case "completed":
         return (
           <>
             <CheckCircle className="w-4 h-4 text-green-500" />
             <span className="text-green-600">Completed</span>
           </>
         );
-      case "In Progress":
+      case "in-progress":
         return (
           <>
             <Clock className="w-4 h-4 text-yellow-500" />
             <span className="text-yellow-600">In Progress</span>
           </>
         );
-      case "Not Started":
+      case "not-started":
       default:
         return (
           <>
@@ -61,7 +61,7 @@ export default async function Projects() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map((project: any) => (
-          <Card key={project._id} className="p-2">
+          <Card key={project._id} className="p-2 gap-2">
             <CardHeader className="p-2 pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xl">{project.name}</CardTitle>
@@ -87,16 +87,18 @@ export default async function Projects() {
                 </span>
               </div>
               <p className="text-gray-700 mb-2">{project.description}</p>
-              <div className="relative w-full aspect-[16/9]">
-                <Image
-                  src={project.imageUrl}
-                  alt={project.name}
-                  fill
-                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                  className="rounded object-cover"
-                  priority
-                />
-              </div>
+              {project.imageUrl && (
+                <div className="relative w-full aspect-[16/9]">
+                  <Image
+                    src={project.imageUrl}
+                    alt={project.name}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="rounded object-cover"
+                    priority
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
