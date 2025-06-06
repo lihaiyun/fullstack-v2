@@ -6,6 +6,7 @@ import http from "@/utils/http";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const projectSchema = Yup.object().shape({
   name: Yup.string()
@@ -293,18 +294,20 @@ export default function EditProject() {
         </div>
         {/* Confirmation dialog */}
         {showConfirm && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded shadow-lg p-6 max-w-sm w-full">
-              <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
-              <p className="mb-6">
-                Are you sure you want to delete this project? This action
-                cannot be undone.
-              </p>
-              <div className="flex justify-end gap-2">
+          <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm Delete</DialogTitle>
+              </DialogHeader>
+              <div className="mb-6">
+                Are you sure you want to delete this project? This action cannot be undone.
+              </div>
+              <DialogFooter>
                 <button
                   className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
                   onClick={() => setShowConfirm(false)}
                   disabled={deleting}
+                  type="button"
                 >
                   Cancel
                 </button>
@@ -312,12 +315,13 @@ export default function EditProject() {
                   className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
                   onClick={handleDelete}
                   disabled={deleting}
+                  type="button"
                 >
                   {deleting ? "Deleting..." : "Delete"}
                 </button>
-              </div>
-            </div>
-          </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
       </form>
     </div>
