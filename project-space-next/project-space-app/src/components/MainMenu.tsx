@@ -8,11 +8,12 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function MainMenu() {
   const { user, setUser } = useContext(UserContext);
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     try {
@@ -31,12 +32,24 @@ export default function MainMenu() {
         <NavigationMenuList>
           <div className="flex gap-2">
             <NavigationMenuItem>
-              <NavigationMenuLink className="text-lg" asChild>
+              <NavigationMenuLink
+                className={`text-lg ${
+                  pathname === "/" ? "font-bold text-blue-600" : ""
+                }`}
+                asChild
+              >
                 <Link href="/">Home</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink className="text-lg" asChild>
+              <NavigationMenuLink
+                className={`text-lg ${
+                  pathname.startsWith("/projects")
+                    ? "font-bold text-blue-600"
+                    : ""
+                }`}
+                asChild
+              >
                 <Link href="/projects">Projects</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
