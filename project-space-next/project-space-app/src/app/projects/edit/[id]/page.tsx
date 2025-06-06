@@ -7,6 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { parseISO, format } from "date-fns";
 
 const projectSchema = Yup.object().shape({
   name: Yup.string()
@@ -62,10 +63,15 @@ export default function EditProject() {
       try {
         const res = await http.get(`/projects/${params.id}`);
         const { name, description, dueDate, status } = res.data;
+        // Use date-fns to convert to YYYY-MM-DD for input type="date"
+        let localDueDate = "";
+        if (dueDate) {
+          localDueDate = format(parseISO(dueDate), "yyyy-MM-dd");
+        }
         formik.setValues({
           name: name || "",
           description: description || "",
-          dueDate: dueDate ? dueDate.slice(0, 10) : "",
+          dueDate: localDueDate,
           status: status || "not-started",
           imageId: res.data.imageId || "",
           imageUrl: res.data.imageUrl || "",
