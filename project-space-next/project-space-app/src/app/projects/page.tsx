@@ -102,7 +102,11 @@ export default function Projects() {
                     {renderStatus(project.status)}
                   </span>
                 </div>
-                <p className="text-gray-700 mb-2">{project.description}</p>
+                <p
+                  className="text-gray-700 mb-2 whitespace-pre-line line-clamp-2"
+                >
+                  {project.description}
+                </p>
                 {project.imageUrl && (
                   <div className="relative w-full aspect-[16/9]">
                     <Image
