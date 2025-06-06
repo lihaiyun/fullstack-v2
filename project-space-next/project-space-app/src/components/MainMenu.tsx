@@ -27,7 +27,7 @@ export default function MainMenu() {
   };
 
   return (
-    <nav className="flex container mx-auto px-4 my-4">
+    <nav className="flex container mx-auto my-4">
       <NavigationMenu>
         <NavigationMenuList>
           <div className="flex gap-2">
