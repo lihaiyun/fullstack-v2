@@ -7,6 +7,12 @@ import User from "../models/user.js";
 import { validateToken } from "../middlewares/auth.js";
 
 const router = express.Router();
+const isProduction = process.env.NODE_ENV === "production";
+const cookieOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax"
+};
 
 const registerSchema = yup.object().shape({
     name: yup.string().trim()
@@ -100,17 +106,18 @@ router.post("/login", async (req, res) => {
     const accessToken = jwt.sign(userInfo, process.env.APP_SECRET, 
         { expiresIn: process.env.TOKEN_EXPIRES_IN });
     // return access token in cookie, allowing cross-site cookies
-    const isProduction = process.env.NODE_ENV === "production";
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "None" : "Lax",
-    });
+    res.cookie("accessToken", accessToken, cookieOptions);
     res.json({ user: userInfo });
 });
 
 router.get("/auth", validateToken, async (req, res) => {
     res.json({user: req.user});
+});
+
+router.post("/logout", (req, res) => {
+    // Clear the access token cookie
+    res.clearCookie("accessToken", cookieOptions);
+    res.json({ message: "Logged out successfully" });
 });
 
 export default router;
