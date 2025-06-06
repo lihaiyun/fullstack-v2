@@ -267,7 +267,9 @@ export default function EditProject() {
                     src={formik.values.imageUrl}
                     alt="Project Image"
                     fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     className="rounded object-cover"
+                    priority
                   />
                 </div>
               )}
