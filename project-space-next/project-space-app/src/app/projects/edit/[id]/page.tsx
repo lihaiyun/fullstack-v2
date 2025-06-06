@@ -29,6 +29,8 @@ export default function EditProject() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploadProgress, setUploadProgress] = useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -98,14 +100,33 @@ export default function EditProject() {
     }
   };
 
+  const handleDelete = async () => {
+    setDeleting(true);
+    setError(null);
+    try {
+      await http.delete(`/projects/${params.id}`);
+      router.push("/projects");
+    } catch (err: any) {
+      setError("Failed to delete project");
+    } finally {
+      setDeleting(false);
+      setShowConfirm(false);
+    }
+  };
+
   if (loading) {
-    return <div className="p-4 text-center">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Spinner className="w-8 h-8 text-blue-500" />
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <h1 className="text-2xl font-bold mb-8">Edit Project</h1>
       <form className="w-full max-w-2xl" onSubmit={formik.handleSubmit}>
+        {/* Row: Form fields (left) and image (right) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Form fields */}
           <div>
@@ -214,13 +235,6 @@ export default function EditProject() {
               )}
             </div>
             {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
-              disabled={formik.isSubmitting}
-            >
-              {formik.isSubmitting ? "Saving..." : "Save Changes"}
-            </button>
           </div>
           {/* Right: Image upload and preview */}
           <div>
@@ -230,7 +244,7 @@ export default function EditProject() {
               </label>
               <label
                 htmlFor="image"
-                className="inline-block bg-gray-600 text-white px-3 py-1 rounded cursor-pointer hover:bg-gray-700 transition-colors"
+                className="inline-block bg-blue-600 text-white px-3 py-1 rounded cursor-pointer hover:bg-gray-700 transition-colors"
               >
                 Choose File
                 <input
@@ -259,6 +273,52 @@ export default function EditProject() {
             </div>
           </div>
         </div>
+        {/* Buttons below the row */}
+        <div className="flex gap-2 mt-6">
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+            disabled={formik.isSubmitting}
+          >
+            {formik.isSubmitting ? "Saving..." : "Save Changes"}
+          </button>
+          <button
+            type="button"
+            className="w-full border border-red-300 text-red-600 py-2 rounded bg-white hover:bg-red-50 transition-colors"
+            onClick={() => setShowConfirm(true)}
+            disabled={deleting}
+          >
+            Delete
+          </button>
+        </div>
+        {/* Confirmation dialog */}
+        {showConfirm && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white rounded shadow-lg p-6 max-w-sm w-full">
+              <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
+              <p className="mb-6">
+                Are you sure you want to delete this project? This action
+                cannot be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                  onClick={() => setShowConfirm(false)}
+                  disabled={deleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+                  {deleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
