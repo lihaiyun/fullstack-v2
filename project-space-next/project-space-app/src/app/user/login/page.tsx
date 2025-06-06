@@ -36,7 +36,7 @@ export default function Login() {
           // Handle successful login
           console.log("Login successful:", res.data);
           setUser(res.data.user);
-          //router.push("/"); // Redirect to home page after login
+          router.push("/"); // Redirect to home page after login
         })
         .catch(function (err) {
           // Handle error, e.g., show a notification or alert
